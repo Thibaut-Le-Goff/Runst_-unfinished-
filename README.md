@@ -5,7 +5,7 @@ And I learned through my school projects that explaining what I did force me to 
 
 My goal is to create a module that will make easier the creation of a neural network.
 
-<ins>What is a neural network</ins>
+<h5><ins>What is a neural network</ins></h5>
 A neural network can be separated in three main area:
 <p align="center">
     <img src="nn1.png" width="500"/>
@@ -35,9 +35,45 @@ This can be sum up with matrices:
     <img src="nn3.png" width="250"/>
 </p>
 
-Matrices can help us to calculate all the neurones in the hidden layer:
+In this example the matrice [5 10] is multiplied by the vector [3 7] , which give us 85.
+
+Matrices can help us to calculate all the neurones in the hidden layer at the same time:
+<p align="center">
+    <img src="nn4.png" width="600"/>
+</p>
+
+With the result in the vector [33 85 53] , the neurones in the hidden layer can calculate values they will send to the next layer with a activation function.
+
+But, before going further with the concepts of activation function, I want to explain my code.
+
+<h5><ins>My code</ins></h5>
+<ins>Weight initialisation:</ins> 
+
+First I have to initialise the weitghs and they can be created in a matrix, I created à function that will take as input the number of column and the number of row and will out put the matrix which is a vecor of vectors of floats in 64 bits:
+```rust
+pub fn uniform_dis(column: usize, row: usize) -> Vec<Vec<f64>> {
+```
+We come to some things I didn't mention, the weights are initialised randomly betwen two numbers and those number are determined by the type of initialisation we choose, here I choose an uniform distribution.
+
+The formula to detemine the two numbers are:
+<p align="center">
+    <img src="for1.png" width="300"/>
+</p>
+Here fanin is equal of the number of weights coming toward one neuron, for axemple:
 
 
-0 explique ce qu'est un réseau de neurone 
-1 création des poids 
-2 calcule matrice x vecteur 
+
+In my code it's make:
+
+```rust
+    let a: f64 = -1.0 / (column as f64).sqrt();
+    let b: f64 = 1.0 / (column as f64).sqrt();
+    // .sqrt() only works with float
+```
+Here 
+
+```rust
+    let matrix: Vec<Vec<f64>> = random(column, row, a, b);
+```
+
+<ins>The multiplication of a matrix by a vector:</ins> \
