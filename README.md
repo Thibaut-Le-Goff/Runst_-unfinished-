@@ -59,21 +59,32 @@ The formula to detemine the two numbers are:
 <p align="center">
     <img src="for1.png" width="300"/>
 </p>
-Here fanin is equal of the number of weights coming toward one neuron, for axemple:
 
+Here fan_in is equal to the number of weights coming toward one neuron, the number of neurons in the previous layer in short, for example:
 
+<p align="center">
+    <img src="nn5.png" width="600"/>
+</p>
+There is also fan_out which is equal to the number of weights coming from one neuron, the number of neurons in the next layer:
+<p align="center">
+    <img src="nn6.png" width="500"/>
+</p>
 
 In my code it's make:
-
 ```rust
     let a: f64 = -1.0 / (column as f64).sqrt();
     let b: f64 = 1.0 / (column as f64).sqrt();
     // .sqrt() only works with float
 ```
-Here 
+Here I use the number of columns in the matrix I want to create because in form of matrices, the number of weights going toward one neuron, fan_in, is the number of columns in the matrix of the weights.
+
+After the calculation of a and b, I put the number of columns and rows in the matrix I want to create, a and b:
 
 ```rust
     let matrix: Vec<Vec<f64>> = random(column, row, a, b);
 ```
+
+The function
+
 
 <ins>The multiplication of a matrix by a vector:</ins> \
