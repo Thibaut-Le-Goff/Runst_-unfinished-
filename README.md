@@ -76,15 +76,42 @@ In my code it's make:
     let b: f64 = 1.0 / (column as f64).sqrt();
     // .sqrt() only works with float
 ```
-Here I use the number of columns in the matrix I want to create because in form of matrices, the number of weights going toward one neuron, fan_in, is the number of columns in the matrix of the weights.
-
-After the calculation of a and b, I put the number of columns and rows in the matrix I want to create, a and b:
-
+Here I use the number of columns in the matrix I want to create because in form of matrices, the number of weights going toward one neuron, fan_in, is the number of columns in the matrix of the weights:
+<p align="center">
+    <img src="nn7.png" width="500"/>
+</p>
+After the calculation of a and b, I put the number of columns and rows in the matrix I want to create, a and b in the function random:
 ```rust
     let matrix: Vec<Vec<f64>> = random(column, row, a, b);
 ```
 
-The function
+The function random will output the matrix I want and look like this:
+```rust
+pub fn random(column: usize, row: usize, a: f64, b: f64) -> Vec<Vec<f64>> {
+    use rand::{thread_rng, Rng}; 
+        
+    let mut matrix: Vec<Vec<f64>> = vec![vec![0.0; column]; row];
+```
+Here, I create a vector with a number of vectors inside it equal to the number of rows I want in the matrix, and inside the vectors I put a number of floats 64 equal to the number of columns I want in the matrix.
 
+If I wanted to create à 3x3 matrix, it would work like it:
+<p align="center">
+    <img src="tab1.png" width="350"/>
+</p>
 
-<ins>The multiplication of a matrix by a vector:</ins> \
+Here each element of the rows is concatenated in the same vectors, but the elements of the columns are in each vector, that is why I am creating the vectors with the number of columns as the length in the vector with the number of rows as the length.
+
+That also explains why in the for loops I am going first on each row and in each column in it:
+```rust
+    let mut rng = thread_rng();
+
+    for i in 0..= (row - 1) {	
+        for j in 0..= (column - 1) {
+            let rand: f64 = rng.gen_range(a..=b);
+            // the weights have to be random betwen a and b
+            matrix[i][j] = rand;
+        }
+    }
+    return matrix;
+}
+```
