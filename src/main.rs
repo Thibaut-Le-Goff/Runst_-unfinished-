@@ -1,8 +1,8 @@
 mod runst;
 
 fn main() {
-	let row: usize = 5; // nb neurones layer n
-	let column: usize = 5; // nb neurones layer n-1, fan_in
+	let row: usize = 4; // nb neurones layer n
+	let column: usize = 4; // nb neurones layer n-1, fan_in
 
 	let test: Vec<Vec<f64>> = runst::weight_init::normal_dis(column, row);
 
