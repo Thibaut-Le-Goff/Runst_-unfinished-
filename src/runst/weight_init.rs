@@ -6,14 +6,10 @@ pub fn random(column: usize, row: usize, a: f64, b: f64) -> Vec<Vec<f64>> {
     let mut rng = thread_rng();
 
     for i in 0..= row - 1 {
-        //thread::scope(|thread| {
-            //thread.spawn(|| {
         for j in 0..= column - 1 {
             let rand: f64 = rng.gen_range(a..=b);
             matrix[i][j] = rand;
         }
-            //});
-        //});
     }
     return matrix;
 }
