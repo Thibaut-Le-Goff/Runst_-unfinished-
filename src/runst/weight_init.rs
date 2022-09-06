@@ -2,9 +2,10 @@ pub fn random(column: usize, row: usize, a: f64, b: f64) -> Vec<f64> {
     use rand::{thread_rng, Rng};
 
     let mut rng = thread_rng();
-    let mut matrix: Vec<f64> = vec![0.0; column * row];
+    let matrix_length: usize = column * row;
+    let mut matrix: Vec<f64> = vec![0.0; matrix_length];
 
-    for i in 0..= (column * row) - 1 {
+    for i in 0..= matrix_length - 1 {
         let rand: f64 = rng.gen_range(a..=b);
         matrix[i] = rand;
     }
