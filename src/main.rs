@@ -21,8 +21,8 @@ fn main() {
     let mat6: Vec<f64> = runst::multiply(&matrix, &vec6);
     println!("{:?}", mat6);
 
-    println!("Avec la fonction ReLU, cela donne :");
-    let mat6: Vec<f64> = runst::activ_fun::relu(&mat6);
+    println!("Avec la fonction SiLU, cela donne :");
+    let mat6: Vec<f64> = runst::activ_fun::silu(&mat6);
     println!("{:?}", mat6);
 
 
@@ -54,10 +54,9 @@ fn main() {
     let mat2: Vec<f64> = runst::multiply(&matrix, &vec2);
     println!("{:?}", mat2);
 
-    println!("Avec la fonction ReLU, cela donne :");
-    let mat2: Vec<f64> = runst::activ_fun::relu(&mat2);
+    println!("Avec la fonction leaky ReLU, cela donne :");
+    let mat2: Vec<f64> = runst::activ_fun::leaky_relu(&mat2);
     println!("{:?}", mat2);
-
 
 
 
@@ -72,7 +71,7 @@ fn main() {
     let mat1: Vec<f64> = runst::multiply(&matrix, &vec1);
     println!("{:?}", mat1);
 
-    println!("Avec la fonction ReLU, cela donne :");
-    let mat1: Vec<f64> = runst::activ_fun::relu(&mat1);
+    println!("Avec la fonction SiLU, cela donne :");
+    let mat1: Vec<f64> = runst::activ_fun::silu(&mat1);
     println!("{:?}", mat1);
 }
