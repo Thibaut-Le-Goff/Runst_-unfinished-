@@ -21,13 +21,13 @@ fn main() {
     let mat6: Vec<f64> = runst::multiply(&matrix, &vec6);
     println!("{:?}", mat6);
 
-    println!("Avec la fonction SiLU, cela donne :");
-    let mat6: Vec<f64> = runst::activ_fun::silu(&mat6);
+    println!("Avec la fonction softmax, cela donne :");
+    let mat6: Vec<f64> = runst::activ_fun::softmax(&mat6);
     println!("{:?}", mat6);
 
 
  
-    println!("La matrise :");
+    println!("\n\n\nLa matrise :");
     println!("{:?}", matrix);
 
     println!("Multipliée par le vecteur :");
@@ -43,8 +43,7 @@ fn main() {
 
 
 
-
-    println!("La matrise :");
+    println!("\n\n\nLa matrise :");
     println!("{:?}", matrix);
 
     println!("Multipliée par le vecteur :");
@@ -54,14 +53,13 @@ fn main() {
     let mat2: Vec<f64> = runst::multiply(&matrix, &vec2);
     println!("{:?}", mat2);
 
-    println!("Avec la fonction leaky ReLU, cela donne :");
-    let mat2: Vec<f64> = runst::activ_fun::leaky_relu(&mat2);
+    println!("Avec la fonction sigmoid, cela donne :");
+    let mat2: Vec<f64> = runst::activ_fun::sigmoid(&mat2);
     println!("{:?}", mat2);
 
 
-
-
-    println!("La matrise :");
+    
+    println!("\n\n\nLa matrise :");
     println!("{:?}", matrix);
 
     println!("Multipliée par le vecteur :");
@@ -71,7 +69,7 @@ fn main() {
     let mat1: Vec<f64> = runst::multiply(&matrix, &vec1);
     println!("{:?}", mat1);
 
-    println!("Avec la fonction SiLU, cela donne :");
-    let mat1: Vec<f64> = runst::activ_fun::silu(&mat1);
+    println!("Avec la fonction softmax, cela donne :");
+    let mat1: Vec<f64> = runst::activ_fun::softmax(&mat1);
     println!("{:?}", mat1);
 }
