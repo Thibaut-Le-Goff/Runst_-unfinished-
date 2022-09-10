@@ -8,7 +8,7 @@ My goal is to create a module that will make easier the creation of a neural net
 <h5><ins>What is a neural network</ins></h5>
 A neural network can be separated in three main area:
 <p align="center">
-    <img src="nn1.png" width="500"/>
+    <img src="images/nn1.png" width="500"/>
 </p>
 
 - Informations relative to what we are looking for are put in the input layer; 
@@ -21,7 +21,7 @@ To make the neural network work the neurones in the input layer will send the in
 
 Then the neurones in the hidden layer will make the sum of the informations sent by the neurones of the input layer multiplied by the weights:
 <p align="center">
-    <img src="nn2.png" width="300"/>
+    <img src="images/nn2.png" width="300"/>
 </p>
 
 In this example, the first neurone sends the number 3 through a weight with the value 5, which means that the neurone in the hidden layer will take 3 * 5 = 15.
@@ -32,14 +32,14 @@ The neurone will make the sum of 15 and 70 which is 85, the final value that wil
 
 This can be sum up with matrices:
 <p align="center">
-    <img src="nn3.png" width="250"/>
+    <img src="images/nn3.png" width="250"/>
 </p>
 
 In this example the matrice [5 10] is multiplied by the vector [3 7] , which give us 85.
 
 Matrices can help us to calculate all the neurones in the hidden layer at the same time:
 <p align="center">
-    <img src="nn4.png" width="600"/>
+    <img src="images/nn4.png" width="600"/>
 </p>
 
 With the result in the vector [33 85 53] , the neurones in the hidden layer can calculate values they will send to the next layer with a activation function.
@@ -57,17 +57,17 @@ We come to some things I didn't mention, the weights are initialised randomly be
 
 The formula to detemine the two numbers are:
 <p align="center">
-    <img src="for1.png" width="300"/>
+    <img src="images/for1.png" width="300"/>
 </p>
 
 Here fan_in is equal to the number of weights coming toward one neuron, the number of neurons in the previous layer in short, for example:
 
 <p align="center">
-    <img src="nn5.png" width="600"/>
+    <img src="images/nn5.png" width="600"/>
 </p>
 There is also fan_out which is equal to the number of weights coming from one neuron, the number of neurons in the next layer:
 <p align="center">
-    <img src="nn6.png" width="500"/>
+    <img src="images/nn6.png" width="500"/>
 </p>
 
 In my code it's make:
@@ -78,7 +78,7 @@ In my code it's make:
 ```
 Here I use the number of columns in the matrix I want to create because in form of matrices, the number of weights going toward one neuron, fan_in, is the number of columns in the matrix of the weights:
 <p align="center">
-    <img src="nn7.png" width="500"/>
+    <img src="images/nn7.png" width="500"/>
 </p>
 After the calculation of a and b, I put the number of columns and rows in the matrix I want to create, a and b in the function random:
 ```rust
@@ -96,7 +96,7 @@ Here, I create a vector with a number of vectors inside it equal to the number o
 
 If I wanted to create à 3x3 matrix, it would work like it:
 <p align="center">
-    <img src="tab1.png" width="350"/>
+    <img src="images/tab1.png" width="350"/>
 </p>
 
 Here each element of the rows is concatenated in the same vectors, but the elements of the columns are in each vector, that is why I am creating the vectors with the number of columns as the length in the vector with the number of rows as the length.
@@ -115,3 +115,15 @@ That also explains why in the for loops I am going first on each row and in each
     return matrix;
 }
 ```
+
+<p align="center">
+    <img src="images/nn8.png" width="500"/>
+</p>
+
+<p align="center">
+    <img src="images/nn9.png" width="500"/>
+</p>
+
+<p align="center">
+    <img src="images/nn10.png" width="250"/>
+</p>

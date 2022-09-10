@@ -37,8 +37,8 @@ fn main() {
     let mat3: Vec<f64> = runst::multiply(&matrix, &vec3);
     println!("{:?}", mat3);
 
-    println!("Avec la fonction ReLU, cela donne :");
-    let mat3: Vec<f64> = runst::activ_fun::relu(&mat3);
+    println!("Avec la fonction softmax, cela donne :");
+    let mat3: Vec<f64> = runst::activ_fun::softmax(&mat3);
     println!("{:?}", mat3);
 
 
@@ -53,8 +53,8 @@ fn main() {
     let mat2: Vec<f64> = runst::multiply(&matrix, &vec2);
     println!("{:?}", mat2);
 
-    println!("Avec la fonction sigmoid, cela donne :");
-    let mat2: Vec<f64> = runst::activ_fun::sigmoid(&mat2);
+    println!("Avec la fonction softmax, cela donne :");
+    let mat2: Vec<f64> = runst::activ_fun::softmax(&mat2);
     println!("{:?}", mat2);
 
 

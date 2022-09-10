@@ -38,6 +38,7 @@ pub fn silu(vector: &Vec<f64>) -> Vec<f64> {
 
 // Last layer activation functions:
 pub fn sigmoid(vector: &Vec<f64>) -> Vec<f64> {
+    
     let mut result: Vec<f64> = vec![0.0; vector.len()];
 
     for i in 0..= vector.len() - 1 {
@@ -49,12 +50,14 @@ pub fn sigmoid(vector: &Vec<f64>) -> Vec<f64> {
 pub fn softmax(vector: &Vec<f64>) -> Vec<f64> {
     /* 
     softmax calculate for each neuron, in the output layer,
-    the probability that the information it indicates is the right.
+    the probability that the information it indicates is the 
+    right.
 
     ex :
     In a neural network which has to know how to differentiate
-    the picture of a cat from the one of a dog, seeing the
-    result in terms of probability seems to be the best.
+    the picture of a cat from the one of a dog, we can see 
+    the results like: The picture have 70% to be one of a 
+    dog and 30% of a cat.
 
     To calculate this function, for each neuron, we have to
     calculate the exponential of the neuron and divide it by
