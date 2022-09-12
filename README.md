@@ -148,5 +148,5 @@ I can also multiply this vector as a matrix by a vector with another length:
 I think this will be useless in a neural network, but I think that could make possible a sort of transformation of the network, I need to test it:
 
 <p align="center">
-    <img src="images/nn10.png" width="550"/>
+    <img src="images/nn10.png" width="300"/>
 </p>
