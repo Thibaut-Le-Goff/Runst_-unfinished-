@@ -4,7 +4,7 @@ fn main() {
     // Network initialisation:
     println!("Initialisation du réseaux de neurones :");
     println!("Le réseau :");
-    const LAYER: [usize; 4] = [3, 2, 6, 4];
+    const LAYER: [usize; 4] = [3, 6, 2, 4];
     println!("Le nombre de neurones de la première couche à la dernière :");
     println!("{:?}\n", LAYER);
 

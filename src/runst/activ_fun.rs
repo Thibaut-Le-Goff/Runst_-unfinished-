@@ -17,7 +17,7 @@ pub fn leaky_relu(vector: &Vec<f64>) -> Vec<f64> {
         if vector[i] > 0.0 {
             result[i] =  vector[i];
         } else {
-            result[i] = 0.01 * vector[i];
+            result[i] = 0.01 * &vector[i];
         };
     }
     return result;
