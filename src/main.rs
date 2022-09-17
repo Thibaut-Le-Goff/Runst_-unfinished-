@@ -25,13 +25,11 @@ fn main() {
     // Creation of the tensor:
     let tensor: [&Vec<f64>; 3] = [&matrix_weight_l0_1, &matrix_weight_l1_2, &matrix_weight_l2_3];
 
-
     // Input layer:
     println!("La couches des entrées, la numéros 0 :");
     let vec_input: Vec<f64> = vec![1.0; LAYER[0]];
     println!("La couche 0 a pour valeurs :");
     println!("{:?}\n", vec_input);
-
 
     // Propagation
     println!("Propagation des données d'entrée :");
@@ -49,4 +47,17 @@ fn main() {
     let vec_l2_3: Vec<f64> = runst::multiply(tensor[2], &vec_l2);
     let vec_l3: Vec<f64> = runst::activ_fun::softmax(&vec_l2_3);
     println!("{:?}\n", vec_l3);
+
+    // Expectation    
+    println!("Ce que le réseaux me donne :");
+    println!("{:?}\n", vec_l3);
+
+    println!("Ce que j'attend que le réseaux me donne :");
+    let expected: Vec<f64> = vec![1.0; LAYER[3]];
+    println!("{:?}\n", expected);
+
+    println!("La fon,ction loss donne donc (reçu - attendu)^2 :");
+    let loss: Vec<f64> = runst::loss(&vec_l3, &expected);
+    println!("{:?}\n", loss);
+
 }

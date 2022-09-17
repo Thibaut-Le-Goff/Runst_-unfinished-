@@ -16,14 +16,13 @@ pub fn multiply(matrix: &Vec<f64>, vector: &Vec<f64>) -> Vec<f64> {
     return result;
 }
 
-pub fn loss(expected: &Vec<f64>, received: &Vec<f64>) -> Vec<f64> {
+pub fn loss(received: &Vec<f64>, expected: &Vec<f64>) -> Vec<f64> {
     let mut result: Vec<f64> = vec![0.0; expected.len()];
 
     for i in 0..= result.len() - 1 {
-        let res: f64 = expected[i] - received[i];
+        let res: f64 = &received[i] - &expected[i];
         result[i] = res * res;
     }
-
     return result;
 }
 
