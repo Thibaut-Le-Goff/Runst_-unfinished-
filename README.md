@@ -189,6 +189,7 @@ pub fn random(column: usize, row: usize, a: f64, b: f64) -> Vec<f64> {
 }
 ```
 <ins>Activation function:</ins>
+
 After the multiplication, the result will pass through what we call an activation function(symbolized by the "f(number)" in the hidden layer neurons on the previous diagrams).
 
 Those functions influence the way the neural network "thinks", like the well-known activation function ReLU I coded:
@@ -213,12 +214,18 @@ On the neurons of the output layer, the neural network already has processed the
 ```rust
 pub fn softmax(vector: &Vec<f64>) -> Vec<f64> {
     /* 
-  softmax calculate for each neuron, in the output layer, the probability that the information it indicates is the right.
+    softmax calculate for each neuron, in the output layer, 
+    the probability that the information it indicates is the right.
 
     ex :
-    In a neural network that has to know how to differentiate the picture of a cat from the one of a dog, we can see the results like The picture has 70% to be one of a dog and 30% of a cat.
+    In a neural network that has to know how to differentiate 
+    the picture of a cat from the one of a dog, we can see 
+    the results like The picture has 70% to be one of a dog 
+    and 30% of a cat.
 
-    To calculate this function, for each neuron, we have to calculate the exponential of the neuron and divide it by the sum of the exponent of the neurons.
+    To calculate this function, for each neuron, we have to 
+    calculate the exponential of the neuron and divide it by 
+    the sum of the exponent of the neurons.
     */
     let mut sum: f64 = 0.0;
     let mut result: Vec<f64> = vec![0.0; vector.len()];
