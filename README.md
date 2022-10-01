@@ -81,6 +81,7 @@ Here I use the number of columns in the matrix I want to create because in form 
     <img src="images/nn7.png" width="500"/>
 </p>
 After the calculation of a and b, I put the number of columns and rows in the matrix I want to create, a and b in the function random:
+
 ```rust
     let matrix: Vec<Vec<f64>> = random(column, row, a, b);
 ```
@@ -113,7 +114,26 @@ If I wanted to create à 3x3 matrix, it would work like it:
 Here each element of the rows is concatenated in the same vectors, but the elements of the columns are in each vector, that is why I am creating the vectors with the number of columns as the length in the vector with the number of rows as the length.
 That also explains why in the for loops I am going first on each row and in each column in it.
 
-But as someone told me, using a vector of vectors as a matrix is not the best option(cf: https://users.rust-lang.org/t/how-can-i-use-the-crate-rayon-to-multiply-a-matrix-by-a-vector/80698), so I managed to rewrite it in order to use only a vector as a matrix :
+<ins>Weight multiplication by the input:</ins>
+
+In the first place I wanted to multiply the matrix of weight by the vector of input this way:
+
+```rust
+pub fn multiply(matrix: Vec<Vec<f64>>, vector: Vec<f64>) -> Vec<f64> {
+    let mut result: Vec<f64> = vec![0.0; matrix.len()];
+
+    for i in 0..= (matrix.len() - 1) { // row
+        let mut x: f64 = 0.0;
+        for j in 0..= (vector.len() - 1) { // column
+            x = (vector[j] * matrix[i][j]) + x;
+        }
+        result[i] = x;
+    }
+    return result;
+}
+```
+
+But as Kornel told me, using a vector of vectors as a matrix is not the best option(cf: https://users.rust-lang.org/t/how-can-i-use-the-crate-rayon-to-multiply-a-matrix-by-a-vector/80698), so I managed to rewrite it in order to use only a vector as a matrix :
 ```rust
 pub fn multiply(matrix: &Vec<f64>, vector: &Vec<f64>) -> Vec<f64> {
 
@@ -150,4 +170,68 @@ I think this will be useless in a neural network, but I think that could make po
 <p align="center">
     <img src="images/nn10-1.png" width="600"/>
 </p>
+
+This way of multiplying a matrix by a vector change the function who initialise the matrix of weights :
+
+```rust
+pub fn random(column: usize, row: usize, a: f64, b: f64) -> Vec<f64> {
+    use rand::{thread_rng, Rng};
+
+    let mut rng = thread_rng();
+    let matrix_length: usize = column * row;
+    let mut matrix: Vec<f64> = vec![0.0; matrix_length];
+
+    for i in 0..= matrix_length - 1 {
+        let rand: f64 = rng.gen_range(a..=b);
+        matrix[i] = rand;
+    }
+    return matrix;
+}
+```
+<ins>Activation function:</ins>
+After the multiplication, the result will pass through what we call an activation function(symbolized by the "f(number)" in the hidden layer neurons on the previous diagrams).
+
+Those functions influence the way the neural network "thinks", like the well-known activation function ReLU I coded:
+
+```rust
+pub fn relu(vector: &Vec<f64>) -> Vec<f64> {
+    let mut result: Vec<f64> = vec![0.0; vector.len()];
+
+    for i in 0..= vector.len() - 1 {
+        if vector[i] > 0.0 {
+            result[i] =  vector[i];
+        };
+    }
+    return result;
+}
+```
+
+But this is the case only for the neurons in the hidden layers.
+
+On the neurons of the output layer, the neural network already has processed the datas it will not "think" about it anymore, the activation function purpose is to represent the datas the neurons received, which are the result of the "reflection" of the neural network, like the softmax activation function:
+
+```rust
+pub fn softmax(vector: &Vec<f64>) -> Vec<f64> {
+    /* 
+  softmax calculate for each neuron, in the output layer, the probability that the information it indicates is the right.
+
+    ex :
+    In a neural network that has to know how to differentiate the picture of a cat from the one of a dog, we can see the results like The picture has 70% to be one of a dog and 30% of a cat.
+
+    To calculate this function, for each neuron, we have to calculate the exponential of the neuron and divide it by the sum of the exponent of the neurons.
+    */
+    let mut sum: f64 = 0.0;
+    let mut result: Vec<f64> = vec![0.0; vector.len()];
+
+    for i in 0..= vector.len() - 1 {
+        sum = sum + &vector[i].exp();
+    }
+
+    for i in 0..= vector.len() - 1 {
+        result[i] = &vector[i].exp() / sum;
+    }
+    return result;
+}
+```
+
 
