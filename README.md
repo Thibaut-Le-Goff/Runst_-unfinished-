@@ -1,9 +1,5 @@
  <center><h2><ins>Runst, a project to learn neural network and Rust</ins></h2></center>
 
-When $a \ne 0$, there are two solutions to $(ax^2 + bx + c = 0)$ and they are 
-
-$$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
-
 As Runst is a big project, I must have a deep understanding of what I am doing and why.
 And I learned through my school projects that explaining what I did force me to tackle subjects I skimmed over when I was doing those and have a better understanding of my project.
 
@@ -60,9 +56,7 @@ pub fn uniform_dis(column: usize, row: usize) -> Vec<Vec<f64>> {
 We come to some things I didn't mention, the weights are initialised randomly betwen two numbers and those number are determined by the type of initialisation we choose, here I choose an uniform distribution.
 
 The formula to detemine the two numbers are:
-<p align="center">
-    <img src="images/for1.png" width="300"/>
-</p>
+$$ a = {-1 \over \sqrt{fan_-in}} \quad \textrm{and} \quad b = {1 \over \sqrt{fan_-in}} $$
 
 Here fan_in is equal to the number of weights coming toward one neuron, the number of neurons in the previous layer in short, for example:
 
