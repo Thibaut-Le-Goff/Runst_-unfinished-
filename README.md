@@ -1,5 +1,8 @@
  <center><h2><ins>Runst, a project to learn neural network and Rust</ins></h2></center>
 
+When $a \ne 0$, there are two solutions to $(ax^2 + bx + c = 0)$ and they are 
+$$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
+
 As Runst is a big project, I must have a deep understanding of what I am doing and why.
 And I learned through my school projects that explaining what I did force me to tackle subjects I skimmed over when I was doing those and have a better understanding of my project.
 
