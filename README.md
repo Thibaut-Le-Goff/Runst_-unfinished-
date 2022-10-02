@@ -24,7 +24,7 @@ Then the neurones in the hidden layer will make the sum of the informations sent
     <img src="images/nn2.png" width="250"/>
 </p>
 
-In this example, the first neurone sends the number 3 through a weight with the value 5, which means that the neurone in the hidden layer will take 3 * 5 = 15.
+In this example, the first neurone sends the number 3 through a weight with the value 5, which means that the neurone in the hidden layer will take $3 * 5 = 15$ .
 
 But, the neurone will also take the information sent by the second neurone of the input layer, 7, with the weight of the value 10, which makes 70.
 
@@ -35,16 +35,31 @@ This can be sum up with matrices:
     <img src="images/nn3.png" width="200"/>
 </p>
 
-In this example the matrice [5 10] is multiplied by the vector [3 7] , which give us 85.
+In this example the matrice $\begin{bmatrix}
+5 & 10 \end{bmatrix}$ is multiplied by the vector $\begin{bmatrix}
+3\\
+7
+\end{bmatrix}$, which give us 85.
 
 Matrices can help us to calculate all the neurones in the hidden layer at the same time:
 <p align="center">
     <img src="images/nn4.png" width="450"/>
 </p>
 
-With the result in the vector [33 85 53] , the neurones in the hidden layer can calculate values they will send to the next layer with a activation function.
+With the result in the vector$\begin{bmatrix}
+33 \\
+85 \\
+53 \end{bmatrix}$, the neurones in the hidden layer can calculate values they will send to the next layer with a activation function.
 
 But, before going further with the concepts of activation function, I want to explain my code.
+
+```dot
+strict digraph {
+  "n0" ["label" = "A"];
+  "n1" ["label" = "B"];
+  "n1" -> "n0";
+}
+```
 
 <h5><ins>My code</ins></h5>
 <ins>Weight initialisation:</ins> 
