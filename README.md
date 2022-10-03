@@ -35,14 +35,14 @@ This can be sum up with matrices:
     <img src="images/nn3.png" width="200"/>
 </p>
 
-In this example the matrice  $\begin{bmatrix} 5 & 10 \end{bmatrix}$  is multiplied by the vector $\begin{bmatrix}3\\7\end{bmatrix}$ , which give us 85.
+In this example the matrice  $ \begin{bmatrix} 5 & 10 \end{bmatrix} $  is multiplied by the vector $ \begin{bmatrix}3\\7\end{bmatrix} $ , which give us 85.
 
 Matrices can help us to calculate all the neurones in the hidden layer at the same time:
 <p align="center">
     <img src="images/nn4.png" width="450"/>
 </p>
 
-With the result in the vector $\begin{bmatrix}33 \\85 \\53 \end{bmatrix}$ , the neurones in the hidden layer can calculate values they will send to the next layer with a activation function.
+With the result in the vector $ \begin{bmatrix}33 \\85 \\53 \end{bmatrix} $ , the neurones in the hidden layer can calculate values they will send to the next layer with a activation function.
 
 But, before going further with the concepts of activation function, I want to explain my code.
 
