@@ -16,6 +16,15 @@ pub fn multiply(matrix: &Vec<f64>, vector: &Vec<f64>) -> Vec<f64> {
     return result;
 }
 
+pub fn bias_addition(vector: &Vec<f64>, bias: &Vec<f64>) -> Vec<f64> {
+    let mut result: Vec<f64> = vec![0.0; vector.len()];
+
+    for i in 0..= vector.len() - 1 {
+        result[i] = vector[i] + bias[i];
+    }
+    return result;
+}
+
 pub fn loss(received: &Vec<f64>, expected: &Vec<f64>) -> Vec<f64> {
     let mut result: Vec<f64> = vec![0.0; expected.len()];
 
