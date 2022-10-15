@@ -36,6 +36,16 @@ pub fn silu(vector: &Vec<f64>) -> Vec<f64> {
     return result;
 }
 
+pub fn soft_plus(vector: &Vec<f64>) -> Vec<f64> {
+    let mut result: Vec<f64> = vec![0.0; vector.len()];
+
+    for i in 0..= vector.len() - 1 {
+        result[i] = (1.0 + (&vector[i].exp())).log(10.0);
+    }
+    return result;
+}
+
+
 // Last layer activation functions:
 pub fn sigmoid(vector: &Vec<f64>) -> Vec<f64> {
     
@@ -63,6 +73,7 @@ pub fn softmax(vector: &Vec<f64>) -> Vec<f64> {
     calculate the exponential of the neuron and divide it by
     the sum of the exponent of the neurons.
     */
+
     let mut sum: f64 = 0.0;
     let mut result: Vec<f64> = vec![0.0; vector.len()];
 
