@@ -27,7 +27,7 @@ fn main() {
     println!("{:?}\n", matrix_weight_l1);
 
     // Creation of the tensor:
-    let mut tensor: [&Vec<f64>; 2] = [&matrix_weight_l0, &matrix_weight_l1];
+    let mut tensor: [Vec<f64>; 2] = [matrix_weight_l0, matrix_weight_l1];
 
     // The bias:
     let mut bias_l1: Vec<f64> = vec![0.0; LAYER[1]];
@@ -39,7 +39,7 @@ fn main() {
     println!("{:?}\n", bias_l2);
 
     // Creation of the bias of matrix:
-    let mut bias_matrix: [&Vec<f64>; 2] = [&bias_l1, &bias_l2];
+    let mut bias_matrix: [Vec<f64>; 2] = [bias_l1, bias_l2];
 
     // details of the structure of the network
     let mut vec_input: Vec<f64> = vec![0.0; LAYER[0]];
@@ -51,8 +51,6 @@ fn main() {
     let mut sum_l2: Vec<f64> = vec![0.0; LAYER[2]];
     let mut sum_l2_bias: Vec<f64> = vec![0.0; LAYER[2]];
 
-    // test
-    let mut new_value: f64 = 0.0;
 
 
     ////////////////////// PROPAGATION ////////////////////////////////////
@@ -65,10 +63,10 @@ fn main() {
         println!("{:?}\n", vec_input);
 
         println!("Dans les neurones de la couche 0(input) à 1 :");
-        sum_l1 = runst::multiply(tensor[0], &vec_input);
+        sum_l1 = runst::multiply(&tensor[0], &vec_input);
         println!("Après La multiplication :");
         println!("{:?}\n", sum_l1);
-        sum_l1_bias = runst::bias_addition(&sum_l1, bias_matrix[0]);
+        sum_l1_bias = runst::bias_addition(&sum_l1, &bias_matrix[0]);
         println!("Après l'ajout des biais :");
         println!("{:?}\n", sum_l1_bias);
         vec_l1 = runst::activ_fun::soft_plus(&sum_l1_bias);
@@ -76,10 +74,10 @@ fn main() {
         println!("{:?}\n", vec_l1);
 
         println!("Dans les neurones de la couche 1 à 2 :");
-        sum_l2 = runst::multiply(tensor[1], &vec_l1);
+        sum_l2 = runst::multiply(&tensor[1], &vec_l1);
         println!("Après La multiplication :");
         println!("{:?}\n", sum_l2);
-        sum_l2_bias = runst::bias_addition(&sum_l2, bias_matrix[1]);
+        sum_l2_bias = runst::bias_addition(&sum_l2, &bias_matrix[1]);
         println!("Après l'ajout des biais :");
         println!("{:?}\n", sum_l2_bias);
 
@@ -95,8 +93,6 @@ fn main() {
         println!("Enregistrement de l'output :");
         observed_effect[i] = sum_l1_bias[0];
     }
-
-    println!("test : {:?}", vec_l1);
 
 
  
@@ -130,8 +126,8 @@ fn main() {
         // taille des pas dans le rapprochement de 
         // sum_derivative_square_residual
 
-    let learning_rate_weights: f64 = 0.001;
-    let learning_rate_bias: f64 = 0.001;
+    let learning_rate_weights: f64 = 0.1;
+    let learning_rate_bias: f64 = 0.1;
 
     let mut sum_derivative_square_residual: f64;
     let mut derivative_square_residual: f64;
@@ -153,9 +149,7 @@ fn main() {
 
         println!("\n\nPour les poids :");
         for j in 0..= weights_l1_find.len() - 1 {
-
             if weights_l1_find[j] == false {
-                new_value = tensor[1][j];
 
                     // met le "compteur" de la somme a zero
                 sum_derivative_square_residual = 0.0;
@@ -173,7 +167,8 @@ fn main() {
                 println!("Le step_size pour le calcule du poid : {:?}", step_size);
         
                     // determination de la prochaine valeur 
-                new_value = new_value - step_size;
+                tensor[1][j] = tensor[1][j] - step_size;
+
                 println!("\nLe poid numéro {:?} de la couche 1 est {:?}", j, tensor[1][j]);
 
                 if sum_derivative_square_residual <= precision_success && sum_derivative_square_residual >= -precision_success {
@@ -187,8 +182,6 @@ fn main() {
 
         println!("\n\nPour le biai :");
         if b3_l1_find[0] == false {
-            new_value = bias_matrix[1][0];
-
                 // met le "compteur" de la somme a zero
             sum_derivative_square_residual = 0.0;
 
@@ -205,8 +198,8 @@ fn main() {
             println!("Le step_size pour le calcule du biai : {:?}", step_size);
 
                 // determination de la prochaine valeur du coéficient directeur
-            new_value = new_value - step_size;
-            println!("\nLe biai : {:?}", bias_matrix[1]);
+            bias_matrix[1][0] = bias_matrix[1][0] - step_size;
+            println!("\nLe biai : {:?}", bias_matrix[1][0]);
 
             if sum_derivative_square_residual <= precision_success && sum_derivative_square_residual >= -precision_success {
                 //if step_size <= step_size_stop && step_size >= -step_size_stop {
