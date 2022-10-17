@@ -8,6 +8,7 @@ fn main() {
     const DESIRED_EFFECT: [f64; 3] = [0.0, 1.0, 0.0]; // ce qui est attendu qu'il donne
 
 
+
     ///////////////////// Network initialisation //////////////////////////
     // The structure of the network
     println!("Initialisation du réseaux de neurones :");
@@ -126,8 +127,8 @@ fn main() {
         // taille des pas dans le rapprochement de 
         // sum_derivative_square_residual
 
-    let learning_rate_weights: f64 = 0.1;
-    let learning_rate_bias: f64 = 0.1;
+    let learning_rate_weights: f64 = 0.001;
+    let learning_rate_bias: f64 = 0.01;
 
     let mut sum_derivative_square_residual: f64;
     let mut derivative_square_residual: f64;
@@ -150,26 +151,27 @@ fn main() {
         println!("\n\nPour les poids :");
         for j in 0..= weights_l1_find.len() - 1 {
             if weights_l1_find[j] == false {
-
                     // met le "compteur" de la somme a zero
                 sum_derivative_square_residual = 0.0;
        
                     // calcule d ssr
                 for y in 0..= observed_effect.len() - 1 {
+                    observed_effect[j] = (&vec_l1[0] * &tensor[1][0]) + (&vec_l1[1] * &tensor[1][1]) + bias_matrix[1][0];
                     derivative_square_residual = (-2.0 * &vec_l1[j]) * (observed_effect[y] - DESIRED_EFFECT[y]);
-        
+                    // hypothèse : observed = (n-1,1 * poid1) + (n-1,2 * poid2) + bias
+
                     sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
                 }
-                println!("La somme des dérivées pour le calcule du du poid : {:?}", sum_derivative_square_residual);
+                println!("\nLa somme des dérivées pour le calcule du poid numéro {:?} : {:?}",j, sum_derivative_square_residual);
         
                     // calcule step size, le pas
                 step_size = sum_derivative_square_residual * learning_rate_weights;
-                println!("Le step_size pour le calcule du poid : {:?}", step_size);
+                println!("Le step_size pour le calcule du poid numéro {:?} : {:?}", j, step_size);
         
                     // determination de la prochaine valeur 
                 tensor[1][j] = tensor[1][j] - step_size;
 
-                println!("\nLe poid numéro {:?} de la couche 1 est {:?}", j, tensor[1][j]);
+                println!("Le poid numéro {:?} de la couche 1 est {:?}", j, tensor[1][j]);
 
                 if sum_derivative_square_residual <= precision_success && sum_derivative_square_residual >= -precision_success {
                     //if step_size <= step_size_stop && step_size >= -step_size_stop {
@@ -187,7 +189,9 @@ fn main() {
 
                 // calcule d ssr
             for j in 0..= observed_effect.len() - 1 {
+                observed_effect[j] = (&vec_l1[0] * &tensor[1][0]) + (&vec_l1[1] * &tensor[1][1]) + bias_matrix[1][0];
                 derivative_square_residual = -2.0 * (observed_effect[j] - DESIRED_EFFECT[j]);
+                // hypothèse : observed = (n-1,1 * poid1) + (n-1,2 * poid2) + bias
 
                 sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
             }
@@ -199,7 +203,7 @@ fn main() {
 
                 // determination de la prochaine valeur du coéficient directeur
             bias_matrix[1][0] = bias_matrix[1][0] - step_size;
-            println!("\nLe biai : {:?}", bias_matrix[1][0]);
+            println!("Le biai : {:?}", bias_matrix[1][0]);
 
             if sum_derivative_square_residual <= precision_success && sum_derivative_square_residual >= -precision_success {
                 //if step_size <= step_size_stop && step_size >= -step_size_stop {
@@ -209,4 +213,7 @@ fn main() {
             }
         }
     }
+
+    println!("\nRécape des poids {:?} : ", weights_l1_find);
+    println!("Récape du biai {:?} : ", b3_l1_find);
 }
