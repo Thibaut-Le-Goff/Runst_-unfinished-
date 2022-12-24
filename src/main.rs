@@ -1,286 +1,192 @@
 mod runst;
+use std::env;
 //from : https://www.youtube.com/watch?v=GKZoOHXGcLo&t=614s
 
 fn main() {
-    ////////////////////////////// Data set ///////////////////////
-    const DOSAGE: [f64; 3] = [0.0, 1.0, 2.0]; // ce qui est donné au réseau
-    //let mut observed_effect: Vec<f64> = vec![0.0; DOSAGE.len()]; // ce que le réseau donne
-    const OBSERVED_EFFECT: [f64; 3] = [0.0, 1.0, 0.0]; // ce que le réseau donne
+    env::set_var("RUST_BACKTRACE", "1");
 
-    //const DESIRED_EFFECT: [f64; 3] = [0.0, 1.0, 0.0]; // ce qui est attendu qu'il donne
-    let mut desired_effect: Vec<f64> = vec![0.0; DOSAGE.len()]; // ce qui est attendu qu'il donne
+    ////////////////////////////// Data set ///////////////////////
+    const DOSAGE: [f32; 3] = [0.0, 0.5, 1.0]; // ce qui est donné au réseau
+    const OBSERVED_EFFECT: [f32; 3] = [0.0, 1.0, 0.0]; // ce qui est attendu qu'il donne
 
 
     ///////////////////// Network initialisation //////////////////////////
     // The structure of the network
-    println!("Initialisation du réseaux de neurones :");
-    println!("Le réseau :");
-    const LAYER: [usize; 3] = [1, 2, 1];
-    println!("Le nombre de neurones de la première couche à la dernière :");
-    println!("{:?}\n", LAYER);
+    const NETWORK_STRUCT: [usize; 3] = [1, 2, 1];
 
-    // The weights:
-    println!("Les poids :");
-    let mut matrix_weight_l0: Vec<f64> = runst::weight_init::normal_dis(LAYER[0], LAYER[1]);
-    println!("La matrix des poids entre la couche 0(input) et 1 :");
-    println!("{:?}\n", matrix_weight_l0);
-   
-    let mut matrix_weight_l1: Vec<f64> = runst::weight_init::normal_dis(LAYER[1], LAYER[2]);
-    println!("La matrix des poids entre la couche 1 et 2 :");
-    println!("{:?}\n", matrix_weight_l1);
+    let mut weights_tensor: Vec<Vec<f32>> = Vec::new();
+    let mut bias_matrix: Vec<Vec<f32>> = Vec::new();
 
-    // Creation of the tensor:
-    let mut tensor: [Vec<f64>; 2] = [matrix_weight_l0, matrix_weight_l1];
+    let mut next_layer: usize;
 
-    // The bias:
-    let mut bias_l1: Vec<f64> = vec![0.0; LAYER[1]];
-    println!("Les biais de la couche 1 sont :");
-    println!("{:?}\n", bias_l1);
+    // create the weights and the bias between the layers:
+    for i in 0..= NETWORK_STRUCT.len() - 2 {
+        next_layer = i + 1;
 
-    let mut bias_l2: Vec<f64> = vec![0.0; LAYER[2]];
-    println!("Les biais de la couche 2 sont :");
-    println!("{:?}\n", bias_l2);
+        let weight_matrix: Vec<f32> = runst::weight_init::normal_dis(NETWORK_STRUCT[i], NETWORK_STRUCT[next_layer]);
+        weights_tensor.push(weight_matrix);
 
-    // Creation of the bias of matrix:
-    let mut bias_matrix: [Vec<f64>; 2] = [bias_l1, bias_l2];
-
-    // details of the structure of the network
-    let mut vec_input: Vec<f64> = vec![0.0; LAYER[0]];
-
-    let mut sum_l1: Vec<f64> = vec![0.0; LAYER[1]];
-    let mut sum_l1_bias: Vec<f64> = vec![0.0; LAYER[1]];
-    let mut vec_l1: Vec<f64> = vec![0.0; LAYER[1]];
-
-    let mut sum_l2: Vec<f64> = vec![0.0; LAYER[2]];
-    let mut sum_l2_bias: Vec<f64> = vec![0.0; LAYER[2]];
-
+        let bias_vector: Vec<f32> = vec![0.0; NETWORK_STRUCT[next_layer]];
+        bias_matrix.push(bias_vector);
+    }
 
 
     ////////////////////// PROPAGATION ////////////////////////////////////
+    let mut network_outputs_sum_bias: Vec<Vec<f32>> = Vec::new();
+    let mut network_outputs_neurons: Vec<Vec<f32>> = Vec::new();
+    
     for i in 0..= DOSAGE.len() - 1 {
-        println!("Propagation des données d'entrée :");
+        // for each pair of datas in the data set
+        println!("Propagation numéro {} des données d'entrée :", i);
 
-        // Input layer:
+        //let mut neuron_out: Vec<f32> = Vec::new();
+        //let mut neuron_sum: Vec<f32> = Vec::new();
+        //let mut neuron_sum_bias: Vec<f32> = Vec::new();
+
+        /* 
         println!("La couches des entrées, la numéros 0 a pour valeurs :");
-        vec_input[0] = DOSAGE[i];
-        println!("{:?}\n", vec_input);
+        neuron_out = vec![DOSAGE[i]; NETWORK_STRUCT[0]];
+        println!("{:?}\n", &neuron_out);
+        */
+
+        println!("La couches des entrées, la numéros 0 a pour valeurs :");
+        let neuron_out: Vec<f32> = vec![DOSAGE[i]; NETWORK_STRUCT[0]];
+        println!("{:?}\n", &neuron_out);
+
+        for y in 0..= NETWORK_STRUCT.len() - 2 {
+            // for each hiden layer :
+            // - 1 : because start at 0
+            // - 1 : avoid the first layer
+
+            //let mut neuron_out: Vec<f32> = Vec::new();
+
+            //if y == 0 {
+                // if this is the first layer
+            //    neuron_out = vec![DOSAGE[i]; NETWORK_STRUCT[0]];
+            //} //can't put it here because out of scope
+
+            println!("Dans les neurones de la couche {} à {} :", y, y + 1);
+            let neuron_sum: Vec<f32> = runst::multiply(&weights_tensor[y], &neuron_out);
+            println!("Après La multiplication :");
+            println!("{:?}\n", &neuron_sum);
+            let neuron_sum_bias: Vec<f32> = runst::bias_addition(&neuron_sum, &bias_matrix[y]);
+            println!("Après l'ajout des biais :");
+            println!("{:?}\n", &neuron_sum_bias);
+
+            if y == NETWORK_STRUCT.len() - 1 {
+                // if this is the last layer
+                //drop(neuron_out);
+                let neuron_out: Vec<f32> = runst::activ_fun::none(&neuron_sum_bias);
+                let neuron_activ_fun: Vec<f32> = runst::activ_fun::none(&neuron_sum_bias);
+                println!("Après le passage dans la function d'activation :");
+                println!("{:?}\n", &neuron_out);
+                network_outputs_neurons.push(neuron_activ_fun);
+            } else {
+                //drop(neuron_out);
+                let neuron_out: Vec<f32> = runst::activ_fun::soft_plus(&neuron_sum_bias);
+                let neuron_activ_fun: Vec<f32> = runst::activ_fun::soft_plus(&neuron_sum_bias);
+                println!("Après le passage dans la function d'activation :");
+                println!("{:?}\n", &neuron_out);
+                network_outputs_neurons.push(neuron_activ_fun);
+            }
+
+            network_outputs_sum_bias.push(neuron_sum_bias);
+            //network_outputs_neurons.push(&neuron_activ_fun);
+        }
+
+        /* 
+        // Input NETWORK_STRUCT:
+        println!("La couches des entrées, la numéros 0 a pour valeurs :");
+        let vec_input: Vec<f32> = vec![DOSAGE[i]; NETWORK_STRUCT[0]];
+        println!("{:?}\n", &vec_input);
 
         println!("Dans les neurones de la couche 0(input) à 1 :");
-        sum_l1 = runst::multiply(&tensor[0], &vec_input);
+        let vec_l0_sum: Vec<f32> = runst::multiply(&weights_tensor[0], &vec_input);
         println!("Après La multiplication :");
-        println!("{:?}\n", sum_l1);
-        sum_l1_bias = runst::bias_addition(&sum_l1, &bias_matrix[0]);
+        println!("{:?}\n", &vec_l0_sum);
+        let vec_l0_sum_bias: Vec<f32> = runst::bias_addition(&vec_l0_sum, &bias_matrix[0]);
         println!("Après l'ajout des biais :");
-        println!("{:?}\n", sum_l1_bias);
-        vec_l1 = runst::activ_fun::soft_plus(&sum_l1_bias);
+        println!("{:?}\n", &vec_l0_sum_bias);
+        let vec_l0_activ_fun: Vec<f32> = runst::activ_fun::soft_plus(&vec_l0_sum_bias);
         println!("Après le passage dans la function d'activation :");
-        println!("{:?}\n", vec_l1);
+        println!("{:?}\n", &vec_l0_activ_fun);
 
         println!("Dans les neurones de la couche 1 à 2 :");
-        sum_l2 = runst::multiply(&tensor[1], &vec_l1);
+        let vec_l1_sum: Vec<f32> = runst::multiply(&weights_tensor[1], &vec_l0_activ_fun);
         println!("Après La multiplication :");
-        println!("{:?}\n", sum_l2);
-        sum_l2_bias = runst::bias_addition(&sum_l2, &bias_matrix[1]);
+        println!("{:?}\n", &vec_l1_sum);
+        let vec_l1_sum_bias: Vec<f32> = runst::bias_addition(&vec_l1_sum, &bias_matrix[1]);
         println!("Après l'ajout des biais :");
-        println!("{:?}\n", sum_l2_bias);
-
-        /* 
-        let vec_l2: Vec<f64> = runst::activ_fun::soft_plus(&sum_l1_bias);
+        println!("{:?}\n", &vec_l1_sum_bias);
+        let vec_l1_activ_fun: Vec<f32> = runst::activ_fun::none(&vec_l1_sum_bias);
         println!("Après le passage dans la function d'activation :");
-        println!("{:?}\n", vec_l2);
+        println!("{:?}\n", &vec_l1_activ_fun);
+
+
+        //enregistrement des données:
+        //network_outputs_input_neurons.push(vec_input);
+
+        //network_output.push(vec_l0_sum);
+        network_outputs_sum_bias.push(vec_l0_sum_bias);
+        network_outputs_neurons.push(vec_l0_activ_fun);
+
+        //network_output.push(vec_l1_sum);
+        network_outputs_sum_bias.push(vec_l1_sum_bias);
+        network_outputs_neurons.push(vec_l1_activ_fun);
         */
-
-        println!("\n\nCe que le réseaux me donne :");
-        println!("{:?}\n", sum_l1_bias);
-
-        println!("Enregistrement de l'output :");
-        //observed_effect[i] = sum_l1_bias[0];
-        desired_effect[i] = sum_l1_bias[0];
     }
 
 
- 
-        /////////////////////// BACKPROPAGATION //////////////////////////
+    /* 
+    let outputs_sum_bias: usize = network_outputs_sum_bias.len() - 1;
+    let outputs_neurons: usize = network_outputs_neurons.len() - 1;
 
-        /* 
-        const DOSAGE: [f64; 3] = [0.0, 1.0, 2.0]; // ce qui est donné au réseau
-        let mut observed_effect: Vec<f64> = vec![0.0; 3]; // ce que le réseau donne
+    let couche_totale: usize = NETWORK_STRUCT.len() - 1;
+    // pour un nombre qui est :
+    //   NETWORK_STRUCT.len() = le nombre de couches dans le réseau
+    //   NETWORK_STRUCT.len() *  1 = multiplier par le nb de données enregistrées 
+    //                      sum_bias et activ_fun pour un autre vecteur
+    //   NETWORK_STRUCT.len() - 1 = moins la donnée n'existants pas
+    //                     à la couche input
 
-        const DESIRED_EFFECT: [f64; 3] = [0.0, 1.0, 0.0]; // ce qui est attendu qu'il donne
-        */
+    println!("\n\nCe que le réseaux me donne à l'enver :");
+    for prop in 0..= DOSAGE.len() - 1 {
+        // pour chaque propagation
+        println!("\n\nÀ la propagation numéro {} :", (DOSAGE.len() - 1) - prop);
 
-    let try_number: usize = 1000;
+        println!("Dans les neurones de la couche 1 à 2 :");
+        println!("Après le passage dans la function d'activation :");
+        println!("{:?}\n", network_outputs_neurons[outputs_neurons - (prop * couche_totale)]);
+        println!("Après l'ajout des biais :");
+        println!("{:?}\n", network_outputs_sum_bias[outputs_sum_bias - (prop * couche_totale)]);
 
-    let mut weights_l0_find: Vec<bool> = vec![false; tensor[0].len()];
-    let mut weights_l1_find: Vec<bool> = vec![false; tensor[1].len()];
+        println!("Dans les neurones de la couche 0(input) à 1 :");
+        println!("Après le passage dans la function d'activation :");
+        println!("{:?}\n", network_outputs_neurons[outputs_neurons - ((prop * couche_totale) + 1)]);
+        println!("Après l'ajout des biais :");
+        println!("{:?}\n", network_outputs_sum_bias[outputs_sum_bias - ((prop * couche_totale) + 1)]);
 
-    let mut bias_l0_find: Vec<bool> = vec![false; bias_matrix[0].len()];
-    let mut b3_l1_find: Vec<bool> = vec![false; bias_matrix[1].len()];
+        println!("La couches des entrées, la numéros 0 a pour valeurs :");
+        println!("{:?}\n", DOSAGE[(DOSAGE.len() - 1) - prop]);
 
-        // indication si les valeurs attendue ont 
-        // était trouvées
-        
-    let precision_success: f64 = 0.001;
-        // le programme s'arêtera lorsque que la somme
-        // des dérivées du carré de la différence entre les 
-        // données observées et prévues est entre cette 
-        // valeur et sont négatif
-
-    let mut step_size: f64;
-        // taille des pas dans le rapprochement de 
-        // sum_derivative_square_residual
-
-    let learning_rate_weights: f64 = 0.01;
-    let learning_rate_bias: f64 = 0.1;
-
-    let mut sum_derivative_square_residual: f64;
-    let mut derivative_square_residual: f64;
-        // la somme des dérivés du carré de la différence 
-        // entre la valeur observé et celle attendue
-        // pour le calcule du coéficient directeur de la
-        // courbes des prédictions a N-1 et N
-
-        // <brouilon>
-        // let batch_number: usize = 2;
-        // pour mini batche :
-        // for j in 0..= batch_number - 1 {  a la place de for j in WEIGHT.len() -1
-        //  crée un nombre aléatoire x entre 0 et OBSERVED_HEIGHT.len()
-        //  utilise x dans WEIGHT[x] et OBSERVED_HEIGHT[x]
-        // </brouilon>
-
-    for _i in 0..= try_number - 1 {
-        // pour le nombre d'essayes indiqué
-
-        //println!("\n\nPour les poids :");
-        for j in 0..= weights_l1_find.len() - 1 {
-            if weights_l1_find[j] == false {
-                    // met le "compteur" de la somme a zero
-                sum_derivative_square_residual = 0.0;
-       
-                    // calcule d ssr
-                for y in 0..= desired_effect.len() - 1 {
-                    desired_effect[j] = (&vec_l1[0] * &tensor[1][0]) + (&vec_l1[1] * &tensor[1][1]) + &bias_matrix[1][0];
-                    derivative_square_residual = (-2.0 * &vec_l1[j]) * (OBSERVED_EFFECT[y] - &desired_effect[y]);
-                    // hypothèse : observed = (n-1,1 * poid1) + (n-1,2 * poid2) + bias
-
-                    sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
-                }
-                //println!("\nLa somme des dérivées pour le calcule du poid numéro {:?} : {:?}",j, sum_derivative_square_residual);
-        
-                    // calcule step size, le pas
-                step_size = sum_derivative_square_residual * learning_rate_weights;
-                //println!("Le step_size pour le calcule du poid numéro {:?} : {:?}", j, step_size);
-        
-                    // determination de la prochaine valeur 
-                tensor[1][j] = tensor[1][j] - step_size;
-
-                //println!("Le poid numéro {:?} de la couche 1 est {:?}", j, tensor[1][j]);
-
-                if sum_derivative_square_residual <= precision_success && sum_derivative_square_residual >= -precision_success {
-                    //if step_size <= step_size_stop && step_size >= -step_size_stop {
-                    println!("\n\nfini de trouver le bon poid numéro {:?} de la couche 1 !", j);
-                    weights_l1_find[j] = true;
-                    println!("Le poid : {:?}", tensor[1][j]);
-                }
+        for couche in 0..= couche_totale - 1 {
+            // pour chaque couches, NETWORK_STRUCT.len() - 1
+            println!("Les neurons :");
+            for neuron in 0..= network_outputs_neurons[outputs_neurons - ((prop * couche_totale) + couche)].len() - 1 {
+                // pour chaque neuron de la couche j de l'itération i
+                println!("{:?}\n", network_outputs_neurons[outputs_neurons - ((prop * couche_totale) + couche)][neuron]);
+            }
+            println!("Les sum_bias :");
+            for sum_bias in 0..= network_outputs_sum_bias[outputs_sum_bias - ((prop * couche_totale) + couche)].len() - 1 {
+                // pour chaque sum_bias de la couche j de l'itération i
+                println!("{:?}\n", network_outputs_sum_bias[outputs_sum_bias - ((prop * couche_totale) + couche)][sum_bias]);
             }
         }
-
-        //println!("\n\nPour le biai :");
-        if b3_l1_find[0] == false {
-                // met le "compteur" de la somme a zero
-            sum_derivative_square_residual = 0.0;
-
-                // calcule d ssr
-            for j in 0..= desired_effect.len() - 1 {
-                desired_effect[j] = (&vec_l1[0] * &tensor[1][0]) + (&vec_l1[1] * &tensor[1][1]) + &bias_matrix[1][0];
-                derivative_square_residual = -2.0 * (OBSERVED_EFFECT[j] - &desired_effect[j]);
-                // hypothèse : observed = (n-1,1 * poid1) + (n-1,2 * poid2) + bias
-
-                sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
-            }
-            //println!("La somme des dérivées pour le calcule du biai : {:?}", sum_derivative_square_residual);
-
-                // calcule step size, le pas
-            step_size = sum_derivative_square_residual * learning_rate_bias;
-            //println!("Le step_size pour le calcule du biai : {:?}", step_size);
-
-                // determination de la prochaine valeur du coéficient directeur
-            bias_matrix[1][0] = bias_matrix[1][0] - step_size;
-            //println!("Le biai : {:?}", bias_matrix[1][0]);
-
-            if sum_derivative_square_residual <= precision_success && sum_derivative_square_residual >= -precision_success {
-                //if step_size <= step_size_stop && step_size >= -step_size_stop {
-                println!("\n\nfini de trouver le bon biai numéro 3 !");
-                b3_l1_find[0] = true;
-                println!("Le biai : {:?}", bias_matrix[1][0]);
-            }
-        }
-
-        for j in 0..= weights_l1_find.len() - 1 {
-            if weights_l0_find[j] == false {
-                    // met le "compteur" de la somme a zero
-                sum_derivative_square_residual = 0.0;
-       
-                    // calcule d ssr
-                for y in 0..= desired_effect.len() - 1 {
-                    desired_effect[j] = (&vec_l1[0] * &tensor[1][0]) + (&vec_l1[1] * &tensor[1][1]) + &bias_matrix[1][0];
-                    derivative_square_residual = DOSAGE[j] * (sum_l1_bias[j].exp() / (1.0 + (sum_l1_bias[j].exp()))) * &tensor[1][j] * -2.0 * (OBSERVED_EFFECT[y] - desired_effect[y]);
-                    // hypothèse : observed = (n-1,1 * poid1) + (n-1,2 * poid2) + bias
-
-                    sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
-                }
-                //println!("\nLa somme des dérivées pour le calcule du poid numéro {:?} : {:?}",j, sum_derivative_square_residual);
-        
-                    // calcule step size, le pas
-                step_size = sum_derivative_square_residual * learning_rate_weights;
-                //println!("Le step_size pour le calcule du poid numéro {:?} : {:?}", j, step_size);
-        
-                    // determination de la prochaine valeur
-                tensor[0][j] = tensor[0][j] - step_size;
-
-                //println!("Le poid numéro {:?} de la couche 1 est {:?}", j, tensor[1][j]);
-
-                if sum_derivative_square_residual <= precision_success && sum_derivative_square_residual >= -precision_success {
-                    //if step_size <= step_size_stop && step_size >= -step_size_stop {
-                    println!("\n\nfini de trouver le bon poid numéro {:?} de la couche 0 !", j);
-                    weights_l0_find[j] = true;
-                    println!("Le poid : {:?}", tensor[1][j]);
-                }
-            }
-        }
-
-        for j in 0..= bias_l0_find.len() - 1 {
-            if bias_l0_find[j] == false {
-                    // met le "compteur" de la somme a zero
-                sum_derivative_square_residual = 0.0;
-       
-                    // calcule d ssr
-                for y in 0..= desired_effect.len() - 1 {
-                    desired_effect[j] = (&vec_l1[0] * &tensor[1][0]) + (&vec_l1[1] * &tensor[1][1]) + &bias_matrix[1][0];
-                    derivative_square_residual = (sum_l1_bias[j].exp() / (1.0 + (sum_l1_bias[j].exp()))) * &tensor[1][j] * -2.0 * (OBSERVED_EFFECT[y] - desired_effect[y]);
-                    // hypothèse : observed = (n-1,1 * poid1) + (n-1,2 * poid2) + bias
-
-                    sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
-                }
-                //println!("\nLa somme des dérivées pour le calcule du poid numéro {:?} : {:?}",j, sum_derivative_square_residual);
-        
-                    // calcule step size, le pas
-                step_size = sum_derivative_square_residual * learning_rate_weights;
-                //println!("Le step_size pour le calcule du poid numéro {:?} : {:?}", j, step_size);
-        
-                    // determination de la prochaine valeur
-                bias_matrix[0][j] = bias_matrix[0][j] - step_size;
-
-                //println!("Le poid numéro {:?} de la couche 1 est {:?}", j, tensor[1][j]);
-
-                if sum_derivative_square_residual <= precision_success && sum_derivative_square_residual >= -precision_success {
-                    //if step_size <= step_size_stop && step_size >= -step_size_stop {
-                    println!("\n\nfini de trouver le bon biai numéro {:?} de la couche 0 !", j);
-                    bias_l0_find[j] = true;
-                    println!("Le biai : {:?}", bias_matrix[0][j]);
-                }
-            }
-        }
-
+        println!("Les neurons :");
+        println!("{:?}\n", DOSAGE[(DOSAGE.len() - 1) - prop]);
     }
+
+    let weights_reverse: usize = weights_tensor.len() - 1;
+    let bias_reverse: usize = bias_matrix.len() - 1;
+    */
 }
