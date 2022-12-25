@@ -37,35 +37,18 @@ fn main() {
     
     for i in 0..= DOSAGE.len() - 1 {
         // for each pair of datas in the data set
-        println!("Propagation numéro {} des données d'entrée :", i);
-
-        //let mut neuron_out: Vec<f32> = Vec::new();
-        //let mut neuron_sum: Vec<f32> = Vec::new();
-        //let mut neuron_sum_bias: Vec<f32> = Vec::new();
-
-        /* 
-        println!("La couches des entrées, la numéros 0 a pour valeurs :");
-        neuron_out = vec![DOSAGE[i]; NETWORK_STRUCT[0]];
-        println!("{:?}\n", &neuron_out);
-        */
+        println!("Propagation numéro {} des données d'entrée :", i + 1);
 
         println!("La couches des entrées, la numéros 0 a pour valeurs :");
-        let neuron_out: Vec<f32> = vec![DOSAGE[i]; NETWORK_STRUCT[0]];
+        let mut neuron_out: Vec<f32> = vec![DOSAGE[i]; NETWORK_STRUCT[0]];
         println!("{:?}\n", &neuron_out);
 
         for y in 0..= NETWORK_STRUCT.len() - 2 {
-            // for each hiden layer :
+            // for each hiden layer + the output layers:
             // - 1 : because start at 0
             // - 1 : avoid the first layer
 
-            //let mut neuron_out: Vec<f32> = Vec::new();
-
-            //if y == 0 {
-                // if this is the first layer
-            //    neuron_out = vec![DOSAGE[i]; NETWORK_STRUCT[0]];
-            //} //can't put it here because out of scope
-
-            println!("Dans les neurones de la couche {} à {} :", y, y + 1);
+            println!("\nDans les neurones de la couche {} à {} :", y, y + 1);
             let neuron_sum: Vec<f32> = runst::multiply(&weights_tensor[y], &neuron_out);
             println!("Après La multiplication :");
             println!("{:?}\n", &neuron_sum);
@@ -73,28 +56,28 @@ fn main() {
             println!("Après l'ajout des biais :");
             println!("{:?}\n", &neuron_sum_bias);
 
-            if y == NETWORK_STRUCT.len() - 1 {
-                // if this is the last layer
-                //drop(neuron_out);
-                let neuron_out: Vec<f32> = runst::activ_fun::none(&neuron_sum_bias);
-                let neuron_activ_fun: Vec<f32> = runst::activ_fun::none(&neuron_sum_bias);
+            if y == NETWORK_STRUCT.len() - 2 {
+                // if this is the last layer (the last iteration)
+                // We need two time the same output:
+                // - one for the next iteration
+                // - one for the output
+                neuron_out = runst::activ_fun::none(&neuron_sum_bias);
+                let neuron_activ_fun: Vec<f32> = neuron_out.clone();
                 println!("Après le passage dans la function d'activation :");
                 println!("{:?}\n", &neuron_out);
                 network_outputs_neurons.push(neuron_activ_fun);
             } else {
-                //drop(neuron_out);
-                let neuron_out: Vec<f32> = runst::activ_fun::soft_plus(&neuron_sum_bias);
-                let neuron_activ_fun: Vec<f32> = runst::activ_fun::soft_plus(&neuron_sum_bias);
+                neuron_out = runst::activ_fun::soft_plus(&neuron_sum_bias);
+                let neuron_activ_fun: Vec<f32> = neuron_out.clone();
                 println!("Après le passage dans la function d'activation :");
                 println!("{:?}\n", &neuron_out);
                 network_outputs_neurons.push(neuron_activ_fun);
             }
-
             network_outputs_sum_bias.push(neuron_sum_bias);
             //network_outputs_neurons.push(&neuron_activ_fun);
         }
-
-        /* 
+ 
+        println!("\n\n\n\nréférence :");
         // Input NETWORK_STRUCT:
         println!("La couches des entrées, la numéros 0 a pour valeurs :");
         let vec_input: Vec<f32> = vec![DOSAGE[i]; NETWORK_STRUCT[0]];
@@ -125,7 +108,7 @@ fn main() {
 
         //enregistrement des données:
         //network_outputs_input_neurons.push(vec_input);
-
+        /*
         //network_output.push(vec_l0_sum);
         network_outputs_sum_bias.push(vec_l0_sum_bias);
         network_outputs_neurons.push(vec_l0_activ_fun);
