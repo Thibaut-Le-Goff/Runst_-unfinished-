@@ -1,8 +1,8 @@
 // Hidden layer activation functions:
-pub fn relu(vector: &Vec<f64>) -> Vec<f64> {
-    let mut result: Vec<f64> = vec![0.0; vector.len()];
+pub fn relu(vector: &Vec<f32>) -> Vec<f32> {
+    let mut result: Vec<f32> = vec![0.0; vector.len()];
 
-    for i in 0..= vector.len() - 1 {
+    for i in 0..vector.len() {
         if vector[i] > 0.0 {
             result[i] =  vector[i];
         };
@@ -10,10 +10,10 @@ pub fn relu(vector: &Vec<f64>) -> Vec<f64> {
     return result;
 }
 
-pub fn leaky_relu(vector: &Vec<f64>) -> Vec<f64> {
-    let mut result: Vec<f64> = vec![0.0; vector.len()];
+pub fn leaky_relu(vector: &Vec<f32>) -> Vec<f32> {
+    let mut result: Vec<f32> = vec![0.0; vector.len()];
 
-    for i in 0..= vector.len() - 1 {
+    for i in 0..vector.len() {
         if vector[i] > 0.0 {
             result[i] =  vector[i];
         } else {
@@ -23,10 +23,10 @@ pub fn leaky_relu(vector: &Vec<f64>) -> Vec<f64> {
     return result;
 }
 
-pub fn silu(vector: &Vec<f64>) -> Vec<f64> {
-    let mut result: Vec<f64> = vec![0.0; vector.len()];
+pub fn silu(vector: &Vec<f32>) -> Vec<f32> {
+    let mut result: Vec<f32> = vec![0.0; vector.len()];
 
-    for i in 0..= vector.len() - 1 {
+    for i in 0..vector.len() {
         if vector[i] > 0.0 {
             result[i] =  vector[i];
         } else {
@@ -36,28 +36,39 @@ pub fn silu(vector: &Vec<f64>) -> Vec<f64> {
     return result;
 }
 
-pub fn soft_plus(vector: &Vec<f64>) -> Vec<f64> {
-    let mut result: Vec<f64> = vec![0.0; vector.len()];
+pub fn soft_plus(vector: &Vec<f32>) -> Vec<f32> {
+    let mut result: Vec<f32> = vec![0.0; vector.len()];
 
-    for i in 0..= vector.len() - 1 {
+    for i in 0..vector.len() {
         result[i] = (1.0 + (&vector[i].exp())).log(10.0);
+        //result[i] = (1.0 + (&vector[i].exp())).ln();
     }
     return result;
 }
 
 
 // Last layer activation functions:
-pub fn sigmoid(vector: &Vec<f64>) -> Vec<f64> {
+pub fn sigmoid(vector: &Vec<f32>) -> Vec<f32> {
     
-    let mut result: Vec<f64> = vec![0.0; vector.len()];
+    let mut result: Vec<f32> = vec![0.0; vector.len()];
 
-    for i in 0..= vector.len() - 1 {
+    for i in 0..vector.len() {
         result[i] = 1.0 / (1.0 + (-1.0 * &vector[i]).exp());
     }
     return result;
 }
 
-pub fn softmax(vector: &Vec<f64>) -> Vec<f64> {
+pub fn none(vector: &Vec<f32>) -> Vec<f32> {
+    
+    let mut result: Vec<f32> = vec![0.0; vector.len()];
+
+    for i in 0..vector.len() {
+        result[i] = vector[i];
+    }
+    return result;
+}
+
+pub fn softmax(vector: &Vec<f32>) -> Vec<f32> {
     /* 
     softmax calculate for each neuron, in the output layer,
     the probability that the information it indicates is the 
@@ -74,14 +85,14 @@ pub fn softmax(vector: &Vec<f64>) -> Vec<f64> {
     the sum of the exponent of the neurons.
     */
 
-    let mut sum: f64 = 0.0;
-    let mut result: Vec<f64> = vec![0.0; vector.len()];
+    let mut sum: f32 = 0.0;
+    let mut result: Vec<f32> = vec![0.0; vector.len()];
 
-    for i in 0..= vector.len() - 1 {
+    for i in 0..vector.len() {
         sum = sum + &vector[i].exp();
     }
 
-    for i in 0..= vector.len() - 1 {
+    for i in 0..vector.len() {
         result[i] = &vector[i].exp() / sum;
     }
     return result;
