@@ -7,45 +7,34 @@ fn main() {
     env::set_var("RUST_BACKTRACE", "1");
 
     ////////////////////////////// Data set ///////////////////////
-    const DOSAGE: [f32; 3] = [0.0, 0.5, 1.0]; // ce qui est donné au réseau
-    const OBSERVED_EFFECT: [f32; 3] = [0.0, 1.0, 0.0]; // ce qui est attendu qu'il donne
+    let inputs: Vec<f32> = vec![0.0, 0.5, 1.0]; // ce qui est donné au réseau
+    //const inputs: [f32; 3] = [0.0, 0.5, 1.0]; // ce qui est donné au réseau
+    let observed_values: Vec<f32> = vec![0.0, 1.0, 0.0]; // ce qui est attendu qu'il donne
+    //const OBSERVED_EFFECT: [f32; 3] = [0.0, 1.0, 0.0]; // ce qui est attendu qu'il donne
      
     ///////////////////// Network initialisation //////////////////////////
     // The structure of the network
-    //const network_struct: [usize; 3] = [1, 2, 1]; // I will propably put it in a box
     let network_struct: Vec<usize> = vec![1, 2, 1];
-    let distrib: Box<&str> = Box::new("normal_dis");
+    let distrib: &str = "normal_dis";
 
     let (mut weights_tensor, mut bias_matrix) = runst::net_init(&network_struct, &distrib);
-    
-    /*
-    let mut weights_tensor: Vec<Vec<f32>> = Vec::new();
-    let mut bias_matrix: Vec<Vec<f32>> = Vec::new();
-
-    let mut next_layer: usize;
-
-    // create the weights and the bias between the layers:
-    for i in 0..network_struct.len() - 2 {
-        next_layer = i + 1;
-
-        let weight_matrix: Vec<f32> = runst::weight_init::normal_dis(network_struct[i], network_struct[next_layer]);
-        weights_tensor.push(weight_matrix);
-
-        let bias_vector: Vec<f32> = vec![0.0; network_struct[next_layer]];
-        bias_matrix.push(bias_vector);
-    }
-    */
-
+ 
     ////////////////////// PROPAGATION ////////////////////////////////////
+    /*
+    let hiden_activ_fun: &str = "soft_plus";
+    let out_activ_fun: &str = "none";
+
+    let (mut network_outputs_sum_bias, mut network_outputs_neurons) = runst::propagation(&network_struct, &weights_tensor, &bias_matrix, &hiden_activ_fun, &out_activ_fun);
+    */
     let mut network_outputs_sum_bias: Vec<Vec<f32>> = Vec::new();
     let mut network_outputs_neurons: Vec<Vec<f32>> = Vec::new();
     
-    for i in 0..DOSAGE.len() {
+    for i in 0..inputs.len() {
         // for each pair of datas in the data set
         println!("Propagation numéro {} des données d'entrée :", i + 1);
 
         println!("La couches des entrées, la numéros 0 a pour valeurs :");
-        let mut neuron_out: Vec<f32> = vec![DOSAGE[i]; network_struct[0]];
+        let mut neuron_out: Vec<f32> = vec![inputs[i]; network_struct[0]];
         println!("{:?}\n", &neuron_out);
 
         for y in 0..network_struct.len() - 1 {
@@ -85,7 +74,7 @@ fn main() {
             network_outputs_sum_bias.push(neuron_sum_bias);
         }
     }
-
+    
 
     /*
     let outputs_sum_bias: usize = network_outputs_sum_bias.len();
@@ -100,9 +89,9 @@ fn main() {
     //                     à la couche input
 
     println!("\n\nCe que le réseaux me donne à l'enver :");
-    for prop in 0..DOSAGE.len() {
+    for prop in 0..inputs.len() {
         // pour chaque propagation
-        println!("\n\nÀ la propagation numéro {} :", (DOSAGE.len()) - prop);
+        println!("\n\nÀ la propagation numéro {} :", (inputs.len()) - prop);
 
         println!("Dans les neurones de la couche 1 à 2 :");
         println!("Après le passage dans la function d'activation :");
@@ -117,7 +106,7 @@ fn main() {
         println!("{:?}\n", network_outputs_sum_bias[outputs_sum_bias - ((prop * couche_totale) + 1)]);
 
         println!("La couches des entrées, la numéros 0 a pour valeurs :");
-        println!("{:?}\n", DOSAGE[(DOSAGE.len()) - prop]);
+        println!("{:?}\n", inputs[(inputs.len()) - prop]);
 
         for couche in 0..couche_totale {
             // pour chaque couches, network_struct.len()
@@ -133,7 +122,7 @@ fn main() {
             }
         }
         println!("Les neurons :");
-        println!("{:?}\n", DOSAGE[(DOSAGE.len()) - prop]);
+        println!("{:?}\n", inputs[(inputs.len()) - prop]);
     }
     */
 }
