@@ -63,6 +63,7 @@ pub fn he_uniform_dis(column: usize, row: usize) -> Vec<f32> {
     return matrix;
 }
 
+/* 
 pub fn which_dis(dis: &str) -> (usize, Vec<(Box<dyn Fn(usize, usize)->Vec<f32>>, &str)>) {
     ///// list of the available distribution /////
     type FunType = Box<dyn Fn(usize, usize)->Vec<f32>>;
@@ -87,3 +88,4 @@ pub fn which_dis(dis: &str) -> (usize, Vec<(Box<dyn Fn(usize, usize)->Vec<f32>>,
 
    return (function_to_call_i, dist_list);
 }
+*/

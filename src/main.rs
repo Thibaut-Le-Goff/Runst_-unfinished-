@@ -15,9 +15,9 @@ fn main() {
     ///////////////////// Network initialisation //////////////////////////
     // The structure of the network
     let network_struct: Vec<usize> = vec![1, 2, 1];
-    let distrib: &str = "normal_dis";
+    let distrib: &str = "xav_gro_uniform_dis";
 
-    let (mut weights_tensor, mut bias_matrix) = runst::net_init(&network_struct, &distrib);
+    let (mut weights_tensor, mut bias_matrix): (Vec<Vec<f32>>, Vec<Vec<f32>>) = runst::net_init(&network_struct, &distrib);
  
     ////////////////////// PROPAGATION ////////////////////////////////////
     /*
