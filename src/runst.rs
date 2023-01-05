@@ -1,8 +1,5 @@
 ///////////////////// Network initialisation //////////////////////////
 pub fn net_init(network_struct: &Vec<usize>, distrib: &str) -> (Vec<Vec<f32>>, Vec<Vec<f32>>) {
-
-
-    
     ///// list of the available functions /////
     type FunType = Box<dyn Fn(usize, usize)->Vec<f32>>;
     // must be of the type of the output and input of the function to call
@@ -18,22 +15,19 @@ pub fn net_init(network_struct: &Vec<usize>, distrib: &str) -> (Vec<Vec<f32>>, V
     // had to create another type because the fun take 3 usize and not 2
     let mut dist_list_xav_gro: Vec<(FunTypeXavGro, &str)> = Vec::new();
 
-    let mut function_to_call_i: usize = dist_list.len() + 1;
-    // must be higher than dist_list.len() in order to keep the value unchange
+    let mut function_to_call_i: usize = dist_list.len();
+    // must be, at least, equal dist_list.len() in order to keep the value unchange
     // if the wanted dist is not found.
-    
+
     for i in 0..dist_list.len() {
         if dist_list[i].1 == distrib {
             function_to_call_i = i;
         }
     }
-    if function_to_call_i == dist_list.len() + 1 {
+    if function_to_call_i == dist_list.len() {
         // the fact the value didn't change tell  
         // the dist wanted has not been found
 
-        //type FunTypeXavGro = Box<dyn Fn(usize, usize, usize)->Vec<f32>>;
-        // had to create another type because the fun take 3 usize and not 2
-        //let mut dist_list_xav_gro: Vec<(FunTypeXavGro, &str)> = Vec::new();
         dist_list_xav_gro.push((Box::new(weight_init::xav_gro_normal_dis), "xav_gro_normal_dis"));
         dist_list_xav_gro.push((Box::new(weight_init::xav_gro_uniform_dis), "xav_gro_uniform_dis"));
 
@@ -51,26 +45,39 @@ pub fn net_init(network_struct: &Vec<usize>, distrib: &str) -> (Vec<Vec<f32>>, V
     let mut weights_tensor: Vec<Vec<f32>> = Vec::new();
     let mut bias_matrix: Vec<Vec<f32>> = Vec::new();
 
-    let mut next_layer: usize;
-    let mut fan_out: usize;
+    let mut layer_n1: usize;
+    let mut layer_n2: usize;
 
     // create the weights and the bias between the layers:
     for i in 0..network_struct.len() - 1 {
         // the number of things between x things is equal to x - 1
-        next_layer = i + 1;
+        layer_n1 = i + 1;
 
-        if function_to_call_i == dist_list.len() + 1 {
-            fan_out = next_layer + 1;
+        if dist_list_xav_gro.len() > 0 && i == network_struct.len() - 2 {
+            // if the dist_list_xav_gro lenght is higher than 0
+            // that mean a xav_gro fun is wanted
+            // and
+            // if this is the last layer :
+            // -1 because last element of a vec(or array) is vec.len() - 1
+            // -1 because the number of things between x things is equal to x - 1
 
-            let weight_matrix: Vec<f32> = dist_list_xav_gro[function_to_call_i].0(network_struct[i], network_struct[next_layer], network_struct[fan_out]);
+            let weight_matrix: Vec<f32> = dist_list_xav_gro[function_to_call_i].0(network_struct[i], network_struct[layer_n1], 0);
             weights_tensor.push(weight_matrix);
             
-        } else {
-            let weight_matrix: Vec<f32> = dist_list[function_to_call_i].0(network_struct[i], network_struct[next_layer]);
-            weights_tensor.push(weight_matrix);
-        }
+        } else if dist_list_xav_gro.len() > 0 && i < network_struct.len() - 2 {
+            // if the dist_list_xav_gro lenght is higher than 0
+            // that mean a xav_gro fun is wanted
+            layer_n2 = layer_n1 + 1;
 
-        let bias_vector: Vec<f32> = vec![0.0; network_struct[next_layer]];
+            let weight_matrix: Vec<f32> = dist_list_xav_gro[function_to_call_i].0(network_struct[i], network_struct[layer_n1], network_struct[layer_n2]);
+            weights_tensor.push(weight_matrix);
+        
+        } else {
+            let weight_matrix: Vec<f32> = dist_list[function_to_call_i].0(network_struct[i], network_struct[layer_n1]);
+            weights_tensor.push(weight_matrix);
+        };
+
+        let bias_vector: Vec<f32> = vec![0.0; network_struct[layer_n1]];
         bias_matrix.push(bias_vector);
     }
 

@@ -7,17 +7,19 @@ fn main() {
     env::set_var("RUST_BACKTRACE", "1");
 
     ////////////////////////////// Data set ///////////////////////
-    let inputs: Vec<f32> = vec![0.0, 0.5, 1.0]; // ce qui est donné au réseau
-    //const inputs: [f32; 3] = [0.0, 0.5, 1.0]; // ce qui est donné au réseau
-    let observed_values: Vec<f32> = vec![0.0, 1.0, 0.0]; // ce qui est attendu qu'il donne
-    //const OBSERVED_EFFECT: [f32; 3] = [0.0, 1.0, 0.0]; // ce qui est attendu qu'il donne
+    let _inputs: Vec<f32> = vec![0.0, 0.5, 1.0]; // ce qui est donné au réseau
+    let _observed_values: Vec<f32> = vec![0.0, 1.0, 0.0]; // ce qui est attendu qu'il donne
      
     ///////////////////// Network initialisation //////////////////////////
     // The structure of the network
     let network_struct: Vec<usize> = vec![1, 2, 1];
-    let distrib: &str = "xav_gro_uniform_dis";
+    let distrib: &str = "xav_gro_normal_dis";
 
     let (mut weights_tensor, mut bias_matrix): (Vec<Vec<f32>>, Vec<Vec<f32>>) = runst::net_init(&network_struct, &distrib);
+
+    println!("Les pois : {:?}\n\n", weights_tensor);
+    println!("Les biais : {:?}\n\n", bias_matrix);
+
  
     ////////////////////// PROPAGATION ////////////////////////////////////
     /*
@@ -26,7 +28,7 @@ fn main() {
 
     let (mut network_outputs_sum_bias, mut network_outputs_neurons) = runst::propagation(&network_struct, &weights_tensor, &bias_matrix, &hiden_activ_fun, &out_activ_fun);
     */
-    let mut network_outputs_sum_bias: Vec<Vec<f32>> = Vec::new();
+    /*let mut network_outputs_sum_bias: Vec<Vec<f32>> = Vec::new();
     let mut network_outputs_neurons: Vec<Vec<f32>> = Vec::new();
     
     for i in 0..inputs.len() {
@@ -76,7 +78,7 @@ fn main() {
     }
     
 
-    /*
+    
     let outputs_sum_bias: usize = network_outputs_sum_bias.len();
     let outputs_neurons: usize = network_outputs_neurons.len();
 
