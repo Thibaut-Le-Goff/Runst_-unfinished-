@@ -11,9 +11,9 @@ pub fn net_init(network_struct: &Vec<usize>, distrib: &str) -> (Vec<Vec<f32>>, V
     dist_list.push((Box::new(weight_init::he_normal_dis), "he_normal_dis"));
     dist_list.push((Box::new(weight_init::he_uniform_dis), "he_uniform_dis"));
 
+    let mut dist_list_xav_gro: Vec<(FunTypeXavGro, &str)> = Vec::new();
     type FunTypeXavGro = Box<dyn Fn(usize, usize, usize)->Vec<f32>>;
     // had to create another type because the fun take 3 usize and not 2
-    let mut dist_list_xav_gro: Vec<(FunTypeXavGro, &str)> = Vec::new();
 
     let mut function_to_call_i: usize = dist_list.len();
     // must be, at least, equal dist_list.len() in order to keep the value unchange
@@ -38,10 +38,7 @@ pub fn net_init(network_struct: &Vec<usize>, distrib: &str) -> (Vec<Vec<f32>>, V
         }
     }
     
-    ///////////////////////////////////////////
-    
-    //let (function_to_call_i, dist_list) = weight_init::which_dis(distrib);
-
+    //////////////////// initialisation of the weights and bias ///////////////////////
     let mut weights_tensor: Vec<Vec<f32>> = Vec::new();
     let mut bias_matrix: Vec<Vec<f32>> = Vec::new();
 
@@ -67,6 +64,8 @@ pub fn net_init(network_struct: &Vec<usize>, distrib: &str) -> (Vec<Vec<f32>>, V
         } else if dist_list_xav_gro.len() > 0 && i < network_struct.len() - 2 {
             // if the dist_list_xav_gro lenght is higher than 0
             // that mean a xav_gro fun is wanted
+            // and
+            // this is not the last layer
             layer_n2 = layer_n1 + 1;
 
             let weight_matrix: Vec<f32> = dist_list_xav_gro[function_to_call_i].0(network_struct[i], network_struct[layer_n1], network_struct[layer_n2]);
@@ -83,6 +82,19 @@ pub fn net_init(network_struct: &Vec<usize>, distrib: &str) -> (Vec<Vec<f32>>, V
 
     return (weights_tensor, bias_matrix);
 }
+pub mod weight_init;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ///////////////// for the propagation ///////////////////////////
@@ -113,8 +125,55 @@ pub fn bias_addition(vector: &Vec<f32>, bias: &Vec<f32>) -> Vec<f32> {
     return result;
 }
 
+pub fn propagation(inputs: &Vec<f32>, network_struct: &Vec<usize>, weights_tensor: &Vec<Vec<f32>>, bias_matrix: &Vec<Vec<f32>>, hiden_activ_fun: &str, out_activ_fun: &str) -> (Vec<Vec<f32>>, Vec<Vec<f32>>) {
+    let mut network_outputs_sum_bias: Vec<Vec<f32>> = Vec::new();
+    let mut network_outputs_neurons: Vec<Vec<f32>> = Vec::new();
+    
+    for i in 0..inputs.len() {
+        // for each pair of datas in the data set
+        println!("Propagation numéro {} des données d'entrée :", i + 1);
 
+        println!("La couches des entrées, la numéros 0 a pour valeurs :");
+        let mut neuron_out: Vec<f32> = vec![inputs[i]; network_struct[0]];
+        println!("{:?}\n", &neuron_out);
 
+        for y in 0..network_struct.len() - 1 {
+            // for each hiden layer + the output layers:
+            // - 1 : avoid the first layer
 
+            println!("\nDans les neurones de la couche {} à {} :", y + 1, y + 2);
+            let neuron_sum: Vec<f32> = multiply(&weights_tensor[y], &neuron_out);
+            println!("Après La multiplication :");
+            println!("{:?}\n", &neuron_sum);
+            let neuron_sum_bias: Vec<f32> = bias_addition(&neuron_sum, &bias_matrix[y]);
+            println!("Après l'ajout des biais :");
+            println!("{:?}\n", &neuron_sum_bias);
+
+            if y == network_struct.len() - 2 {
+                // if this is the last layer (the last iteration)
+                // last iteration is equal to network_struct.len() - 2
+                // because :
+                // - 1 : the iteration started at 0
+                // - 1 : avoid the first layer exactly like above
+
+                // We need two time the same output:
+                // - one for the next iteration
+                // - one for the output
+                neuron_out = activ_fun::none(&neuron_sum_bias);
+                let neuron_activ_fun: Vec<f32> = neuron_out.clone();
+                println!("Après le passage dans la function d'activation :");
+                println!("{:?}\n", &neuron_out);
+                network_outputs_neurons.push(neuron_activ_fun);
+            } else {
+                neuron_out = activ_fun::soft_plus(&neuron_sum_bias);
+                let neuron_activ_fun: Vec<f32> = neuron_out.clone();
+                println!("Après le passage dans la function d'activation :");
+                println!("{:?}\n", &neuron_out);
+                network_outputs_neurons.push(neuron_activ_fun);
+            }
+            network_outputs_sum_bias.push(neuron_sum_bias);
+        }
+    }
+    return (network_outputs_sum_bias, network_outputs_neurons);
+}
 pub mod activ_fun;
-pub mod weight_init;
