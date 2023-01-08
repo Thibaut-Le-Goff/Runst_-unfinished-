@@ -60,15 +60,10 @@ pub fn sigmoid(vector: &Vec<f32>) -> Vec<f32> {
 
 pub fn none(vector: &Vec<f32>) -> Vec<f32> {
     
-    let mut result: Vec<f32> = vec![0.0; vector.len()];
-
-    for i in 0..vector.len() {
-        result[i] = vector[i];
-    }
-    return result;
+    return vector.to_vec();
 }
 
-pub fn softmax(vector: &Vec<f32>) -> Vec<f32> {
+pub fn soft_max(vector: &Vec<f32>) -> Vec<f32> {
     /* 
     softmax calculate for each neuron, in the output layer,
     the probability that the information it indicates is the 

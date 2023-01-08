@@ -1,5 +1,5 @@
 ///////////////////// Network initialisation //////////////////////////
-pub fn net_init(network_struct: &Vec<usize>, distrib: &str) -> (Vec<Vec<f32>>, Vec<Vec<f32>>) {
+pub fn net_init(network_struct: &Vec<usize>, distrib: &String) -> (Vec<Vec<f32>>, Vec<Vec<f32>>) {
     ///// list of the available functions /////
     type FunType = Box<dyn Fn(usize, usize)->Vec<f32>>;
     // must be of the type of the output and input of the function to call
@@ -16,14 +16,15 @@ pub fn net_init(network_struct: &Vec<usize>, distrib: &str) -> (Vec<Vec<f32>>, V
     // had to create another type because the fun take 3 usize and not 2
 
     let mut function_to_call_i: usize = dist_list.len();
-    // must be, at least, equal dist_list.len() in order to keep the value unchange
-    // if the wanted dist is not found.
+    // must be, at least, equal to dist_list.len() in order to keep the 
+    // value unchange if the wanted dist is not found.
 
     for i in 0..dist_list.len() {
         if dist_list[i].1 == distrib {
             function_to_call_i = i;
         }
     }
+
     if function_to_call_i == dist_list.len() {
         // the fact the value didn't change tell  
         // the dist wanted has not been found
@@ -125,7 +126,37 @@ pub fn bias_addition(vector: &Vec<f32>, bias: &Vec<f32>) -> Vec<f32> {
     return result;
 }
 
-pub fn propagation(inputs: &Vec<f32>, network_struct: &Vec<usize>, weights_tensor: &Vec<Vec<f32>>, bias_matrix: &Vec<Vec<f32>>, hiden_activ_fun: &str, out_activ_fun: &str) -> (Vec<Vec<f32>>, Vec<Vec<f32>>) {
+pub fn propagation(inputs: &Vec<f32>, network_struct: &Vec<usize>, weights_tensor: &Vec<Vec<f32>>, bias_matrix: &Vec<Vec<f32>>, hidden_activ_fun: &str, out_activ_fun: &str) -> (Vec<Vec<f32>>, Vec<Vec<f32>>) {
+    
+    //////////////// Select the activation functions wanted ///////////
+    type FunType = Box<dyn Fn(&Vec<f32>)->Vec<f32>>;
+
+    // linking the functions(FunType) to their name(&str):
+    let mut activ_fun_list: Vec<(FunType, &str)> = Vec::new();
+    activ_fun_list.push((Box::new(activ_fun::relu), "relu"));
+    activ_fun_list.push((Box::new(activ_fun::leaky_relu), "leaky_relu_dis"));
+    activ_fun_list.push((Box::new(activ_fun::silu), "silu"));
+    activ_fun_list.push((Box::new(activ_fun::soft_plus), "soft_plus"));
+    activ_fun_list.push((Box::new(activ_fun::sigmoid), "sigmoid"));
+    activ_fun_list.push((Box::new(activ_fun::none), "none"));
+    activ_fun_list.push((Box::new(activ_fun::soft_max), "soft_max"));
+
+    let mut hidden_activ_fun_i: usize = 0;
+    let mut out_activ_fun_i: usize = 0;
+
+    for i in 0..activ_fun_list.len() {
+        if activ_fun_list[i].1 == hidden_activ_fun {
+            hidden_activ_fun_i = i;
+        }
+        // not else if because the same fun can be use in the
+        // hidden and out layers
+        if activ_fun_list[i].1 == out_activ_fun {
+            out_activ_fun_i = i;
+        }
+    }    
+
+    /////////////// The propagation really start here //////////////
+    
     let mut network_outputs_sum_bias: Vec<Vec<f32>> = Vec::new();
     let mut network_outputs_neurons: Vec<Vec<f32>> = Vec::new();
     
@@ -156,19 +187,25 @@ pub fn propagation(inputs: &Vec<f32>, network_struct: &Vec<usize>, weights_tenso
                 // - 1 : the iteration started at 0
                 // - 1 : avoid the first layer exactly like above
 
+                neuron_out = activ_fun_list[out_activ_fun_i].0(&neuron_sum_bias);
+
                 // We need two time the same output:
                 // - one for the next iteration
                 // - one for the output
-                neuron_out = activ_fun::none(&neuron_sum_bias);
                 let neuron_activ_fun: Vec<f32> = neuron_out.clone();
+                
                 println!("Après le passage dans la function d'activation :");
                 println!("{:?}\n", &neuron_out);
+
                 network_outputs_neurons.push(neuron_activ_fun);
+
             } else {
-                neuron_out = activ_fun::soft_plus(&neuron_sum_bias);
+                neuron_out = activ_fun_list[hidden_activ_fun_i].0(&neuron_sum_bias);
                 let neuron_activ_fun: Vec<f32> = neuron_out.clone();
+
                 println!("Après le passage dans la function d'activation :");
                 println!("{:?}\n", &neuron_out);
+
                 network_outputs_neurons.push(neuron_activ_fun);
             }
             network_outputs_sum_bias.push(neuron_sum_bias);

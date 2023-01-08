@@ -10,10 +10,41 @@ fn main() {
     let inputs: Vec<f32> = vec![0.0, 0.5, 1.0]; // ce qui est donné au réseau
     let _observed_values: Vec<f32> = vec![0.0, 1.0, 0.0]; // ce qui est attendu qu'il donne
      
+    ///////////// Network settings ///////////////////:
+
+    let network_struct: Vec<usize> = vec![1, 2, 1];
+    let distrib: String = String::from("he_uniform_dis");
+    
+    let hidden_activ_fun: &str = "soft_plus";
+    let out_activ_fun: &str = "none";
+
+    /* 
+    struct Network {
+        network_struct: Vec<usize>,
+        distrib: String,
+        
+        hidden_activ_fun: String,
+        out_activ_fun: String,
+    }
+
+    fn main() {
+        let net = Network {
+            network_struct : vec![1, 2, 1],
+            distrib : String::from("he_uniform_dis"),
+                
+            hidden_activ_fun : String::from("soft_plus"),
+            out_activ_fun : String::from("none"),
+        };
+            
+        println!("{:?}", net.network_struct);
+        println!("{:?}", net.distrib);
+        println!("{:?}", net.hidden_activ_fun);
+        println!("{:?}", net.out_activ_fun);
+    }
+    */
+
     ///////////////////// Network initialisation //////////////////////////
     // The structure of the network
-    let network_struct: Vec<usize> = vec![1, 2, 1];
-    let distrib: &str = "he_uniform_dis";
 
     let (mut weights_tensor, mut bias_matrix): (Vec<Vec<f32>>, Vec<Vec<f32>>) = runst::net_init(&network_struct, &distrib);
 
@@ -22,11 +53,8 @@ fn main() {
 
  
     ////////////////////// PROPAGATION ////////////////////////////////////
-    
-    let hiden_activ_fun: &str = "soft_plus";
-    let out_activ_fun: &str = "none";
 
-    let (mut network_outputs_sum_bias, mut network_outputs_neurons) = runst::propagation(&inputs, &network_struct, &weights_tensor, &bias_matrix, &hiden_activ_fun, &out_activ_fun);
+    let (network_outputs_sum_bias, network_outputs_neurons): (Vec<Vec<f32>>, Vec<Vec<f32>>) = runst::propagation(&inputs, &network_struct, &weights_tensor, &bias_matrix, &hidden_activ_fun, &out_activ_fun);
     
     
     ///////////////////// MONTRE LES DONNÉES À L'ENVERS ////////////////////
