@@ -1,8 +1,17 @@
+////// Struct with the settings of the neural network //////
+pub struct Network {
+    pub network_struct: Vec<usize>,
+    pub distrib: String,
+       
+    pub hidden_activ_fun: String,
+    pub out_activ_fun: String,
+}
+
 ///////////////////// Network initialisation //////////////////////////
-pub fn net_init(network_struct: &Vec<usize>, distrib: &String) -> (Vec<Vec<f32>>, Vec<Vec<f32>>) {
+pub fn net_init(net: &Network) -> (Vec<Vec<f32>>, Vec<Vec<f32>>) {
     ///// list of the available functions /////
     type FunType = Box<dyn Fn(usize, usize)->Vec<f32>>;
-    // must be of the type of the output and input of the function to call
+    // must be of the type of the output and inputs of the function to call
 
     // linking the functions(FunType) to their name(&str):
     let mut dist_list: Vec<(FunType, &str)> = Vec::new();
@@ -20,7 +29,7 @@ pub fn net_init(network_struct: &Vec<usize>, distrib: &String) -> (Vec<Vec<f32>>
     // value unchange if the wanted dist is not found.
 
     for i in 0..dist_list.len() {
-        if dist_list[i].1 == distrib {
+        if dist_list[i].1 == net.distrib {
             function_to_call_i = i;
         }
     }
@@ -33,11 +42,21 @@ pub fn net_init(network_struct: &Vec<usize>, distrib: &String) -> (Vec<Vec<f32>>
         dist_list_xav_gro.push((Box::new(weight_init::xav_gro_uniform_dis), "xav_gro_uniform_dis"));
 
         for i in 0..dist_list_xav_gro.len() {
-            if dist_list_xav_gro[i].1 == distrib {
+            if dist_list_xav_gro[i].1 == net.distrib {
                 function_to_call_i = i;
             }
         }
     }
+
+    /*
+    Note to myself:
+        send an error message if:
+            function_to_call_i is still equal to 
+            dist_list.len() in this area
+        
+        Because the distribution wanted is 
+        not available
+    */
     
     //////////////////// initialisation of the weights and bias ///////////////////////
     let mut weights_tensor: Vec<Vec<f32>> = Vec::new();
@@ -47,11 +66,11 @@ pub fn net_init(network_struct: &Vec<usize>, distrib: &String) -> (Vec<Vec<f32>>
     let mut layer_n2: usize;
 
     // create the weights and the bias between the layers:
-    for i in 0..network_struct.len() - 1 {
+    for i in 0..net.network_struct.len() - 1 {
         // the number of things between x things is equal to x - 1
         layer_n1 = i + 1;
 
-        if dist_list_xav_gro.len() > 0 && i == network_struct.len() - 2 {
+        if dist_list_xav_gro.len() > 0 && i == net.network_struct.len() - 2 {
             // if the dist_list_xav_gro lenght is higher than 0
             // that mean a xav_gro fun is wanted
             // and
@@ -59,25 +78,25 @@ pub fn net_init(network_struct: &Vec<usize>, distrib: &String) -> (Vec<Vec<f32>>
             // -1 because last element of a vec(or array) is vec.len() - 1
             // -1 because the number of things between x things is equal to x - 1
 
-            let weight_matrix: Vec<f32> = dist_list_xav_gro[function_to_call_i].0(network_struct[i], network_struct[layer_n1], 0);
+            let weight_matrix: Vec<f32> = dist_list_xav_gro[function_to_call_i].0(net.network_struct[i], net.network_struct[layer_n1], 0);
             weights_tensor.push(weight_matrix);
             
-        } else if dist_list_xav_gro.len() > 0 && i < network_struct.len() - 2 {
+        } else if dist_list_xav_gro.len() > 0 && i < net.network_struct.len() - 2 {
             // if the dist_list_xav_gro lenght is higher than 0
             // that mean a xav_gro fun is wanted
             // and
             // this is not the last layer
             layer_n2 = layer_n1 + 1;
 
-            let weight_matrix: Vec<f32> = dist_list_xav_gro[function_to_call_i].0(network_struct[i], network_struct[layer_n1], network_struct[layer_n2]);
+            let weight_matrix: Vec<f32> = dist_list_xav_gro[function_to_call_i].0(net.network_struct[i], net.network_struct[layer_n1], net.network_struct[layer_n2]);
             weights_tensor.push(weight_matrix);
         
         } else {
-            let weight_matrix: Vec<f32> = dist_list[function_to_call_i].0(network_struct[i], network_struct[layer_n1]);
+            let weight_matrix: Vec<f32> = dist_list[function_to_call_i].0(net.network_struct[i], net.network_struct[layer_n1]);
             weights_tensor.push(weight_matrix);
         };
 
-        let bias_vector: Vec<f32> = vec![0.0; network_struct[layer_n1]];
+        let bias_vector: Vec<f32> = vec![0.0; net.network_struct[layer_n1]];
         bias_matrix.push(bias_vector);
     }
 
@@ -126,34 +145,44 @@ pub fn bias_addition(vector: &Vec<f32>, bias: &Vec<f32>) -> Vec<f32> {
     return result;
 }
 
-pub fn propagation(inputs: &Vec<f32>, network_struct: &Vec<usize>, weights_tensor: &Vec<Vec<f32>>, bias_matrix: &Vec<Vec<f32>>, hidden_activ_fun: &str, out_activ_fun: &str) -> (Vec<Vec<f32>>, Vec<Vec<f32>>) {
+pub fn propagation(net: &Network, inputs: &Vec<f32>, weights_tensor: &Vec<Vec<f32>>, bias_matrix: &Vec<Vec<f32>>) -> (Vec<Vec<f32>>, Vec<Vec<f32>>) {
     
     //////////////// Select the activation functions wanted ///////////
     type FunType = Box<dyn Fn(&Vec<f32>)->Vec<f32>>;
 
     // linking the functions(FunType) to their name(&str):
     let mut activ_fun_list: Vec<(FunType, &str)> = Vec::new();
-    activ_fun_list.push((Box::new(activ_fun::relu), "relu"));
-    activ_fun_list.push((Box::new(activ_fun::leaky_relu), "leaky_relu_dis"));
-    activ_fun_list.push((Box::new(activ_fun::silu), "silu"));
-    activ_fun_list.push((Box::new(activ_fun::soft_plus), "soft_plus"));
-    activ_fun_list.push((Box::new(activ_fun::sigmoid), "sigmoid"));
     activ_fun_list.push((Box::new(activ_fun::none), "none"));
-    activ_fun_list.push((Box::new(activ_fun::soft_max), "soft_max"));
+    activ_fun_list.push((Box::new(activ_fun::relu), "relu"));
+    activ_fun_list.push((Box::new(activ_fun::leaky_relu), "leaky_relu"));
+    activ_fun_list.push((Box::new(activ_fun::silu), "silu"));
+    activ_fun_list.push((Box::new(activ_fun::softplus), "softplus"));
+    activ_fun_list.push((Box::new(activ_fun::sigmoid), "sigmoid"));
+    activ_fun_list.push((Box::new(activ_fun::softmax), "softmax"));
 
-    let mut hidden_activ_fun_i: usize = 0;
-    let mut out_activ_fun_i: usize = 0;
+    let mut hidden_activ_fun_i: usize = activ_fun_list.len();
+    let mut out_activ_fun_i: usize = activ_fun_list.len();
 
     for i in 0..activ_fun_list.len() {
-        if activ_fun_list[i].1 == hidden_activ_fun {
+        if activ_fun_list[i].1 == net.hidden_activ_fun {
             hidden_activ_fun_i = i;
         }
         // not else if because the same fun can be use in the
         // hidden and out layers
-        if activ_fun_list[i].1 == out_activ_fun {
+        if activ_fun_list[i].1 == net.out_activ_fun {
             out_activ_fun_i = i;
         }
-    }    
+    }
+
+    /*
+    Note to myself:
+        send an error message if:
+            hidden_activ_fun_i and/or out_activ_fun_i are still equal to 
+            activ_fun_list.len() in this area
+        
+        Because the activation function wanted is 
+        not available
+    */
 
     /////////////// The propagation really start here //////////////
     
@@ -165,14 +194,14 @@ pub fn propagation(inputs: &Vec<f32>, network_struct: &Vec<usize>, weights_tenso
         println!("Propagation numéro {} des données d'entrée :", i + 1);
 
         println!("La couches des entrées, la numéros 0 a pour valeurs :");
-        let mut neuron_out: Vec<f32> = vec![inputs[i]; network_struct[0]];
+        let mut neuron_out: Vec<f32> = vec![inputs[i]; net.network_struct[0]];
         println!("{:?}\n", &neuron_out);
 
-        for y in 0..network_struct.len() - 1 {
+        for y in 0..net.network_struct.len() - 1 {
             // for each hiden layer + the output layers:
             // - 1 : avoid the first layer
 
-            println!("\nDans les neurones de la couche {} à {} :", y + 1, y + 2);
+            println!("\nDans les neurones de la couche {} :", y + 2);
             let neuron_sum: Vec<f32> = multiply(&weights_tensor[y], &neuron_out);
             println!("Après La multiplication :");
             println!("{:?}\n", &neuron_sum);
@@ -180,9 +209,9 @@ pub fn propagation(inputs: &Vec<f32>, network_struct: &Vec<usize>, weights_tenso
             println!("Après l'ajout des biais :");
             println!("{:?}\n", &neuron_sum_bias);
 
-            if y == network_struct.len() - 2 {
+            if y == net.network_struct.len() - 2 {
                 // if this is the last layer (the last iteration)
-                // last iteration is equal to network_struct.len() - 2
+                // last iteration is equal to net.network_struct.len() - 2
                 // because :
                 // - 1 : the iteration started at 0
                 // - 1 : avoid the first layer exactly like above

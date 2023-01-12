@@ -36,16 +36,14 @@ pub fn silu(vector: &Vec<f32>) -> Vec<f32> {
     return result;
 }
 
-pub fn soft_plus(vector: &Vec<f32>) -> Vec<f32> {
+pub fn softplus(vector: &Vec<f32>) -> Vec<f32> {
     let mut result: Vec<f32> = vec![0.0; vector.len()];
 
     for i in 0..vector.len() {
-        result[i] = (1.0 + (&vector[i].exp())).log(10.0);
-        //result[i] = (1.0 + (&vector[i].exp())).ln();
+        result[i] = (1.0 + (&vector[i].exp())).log(2.0);
     }
     return result;
 }
-
 
 // Last layer activation functions:
 pub fn sigmoid(vector: &Vec<f32>) -> Vec<f32> {
@@ -63,7 +61,7 @@ pub fn none(vector: &Vec<f32>) -> Vec<f32> {
     return vector.to_vec();
 }
 
-pub fn soft_max(vector: &Vec<f32>) -> Vec<f32> {
+pub fn softmax(vector: &Vec<f32>) -> Vec<f32> {
     /* 
     softmax calculate for each neuron, in the output layer,
     the probability that the information it indicates is the 
