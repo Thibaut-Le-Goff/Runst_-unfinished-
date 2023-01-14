@@ -13,11 +13,11 @@ fn main() {
     ///////////// Network settings ///////////////////:
 
     let net = runst::Network {
-        network_struct : vec![1, 2, 1],
+        network_struct : vec![1, 2, 4],
         distrib : String::from("he_uniform_dis"),
-               
+    
         hidden_activ_fun : String::from("relu"),
-        out_activ_fun : String::from("none"),
+        out_activ_fun : String::from("softmax"),
     };
 
     ///////////////////// Network initialisation //////////////////////////

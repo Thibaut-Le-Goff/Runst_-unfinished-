@@ -17,7 +17,7 @@ pub fn leaky_relu(vector: &Vec<f32>) -> Vec<f32> {
         if vector[i] > 0.0 {
             result[i] =  vector[i];
         } else {
-            result[i] = 0.01 * &vector[i];
+            result[i] = 0.01 * vector[i];
         };
     }
     return result;
@@ -27,11 +27,7 @@ pub fn silu(vector: &Vec<f32>) -> Vec<f32> {
     let mut result: Vec<f32> = vec![0.0; vector.len()];
 
     for i in 0..vector.len() {
-        if vector[i] > 0.0 {
-            result[i] =  vector[i];
-        } else {
-            result[i] = 1.0 / (1.0 + (-1.0 * &vector[i]).exp());
-        };
+        result[i] = vector[i] * (1.0 / (1.0 + (-vector[i]).exp()));
     }
     return result;
 }
@@ -40,7 +36,7 @@ pub fn softplus(vector: &Vec<f32>) -> Vec<f32> {
     let mut result: Vec<f32> = vec![0.0; vector.len()];
 
     for i in 0..vector.len() {
-        result[i] = (1.0 + (&vector[i].exp())).log(2.0);
+        result[i] = (1.0 + (vector[i].exp())).ln();
     }
     return result;
 }
@@ -51,7 +47,7 @@ pub fn sigmoid(vector: &Vec<f32>) -> Vec<f32> {
     let mut result: Vec<f32> = vec![0.0; vector.len()];
 
     for i in 0..vector.len() {
-        result[i] = 1.0 / (1.0 + (-1.0 * &vector[i]).exp());
+        result[i] = 1.0 / (1.0 + (-vector[i]).exp());
     }
     return result;
 }
@@ -82,11 +78,11 @@ pub fn softmax(vector: &Vec<f32>) -> Vec<f32> {
     let mut result: Vec<f32> = vec![0.0; vector.len()];
 
     for i in 0..vector.len() {
-        sum = sum + &vector[i].exp();
+        sum = sum + vector[i].exp();
     }
 
     for i in 0..vector.len() {
-        result[i] = &vector[i].exp() / sum;
+        result[i] = vector[i].exp() / sum;
     }
     return result;
 }
