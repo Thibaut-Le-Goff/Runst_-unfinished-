@@ -7,23 +7,26 @@ fn main() {
     env::set_var("RUST_BACKTRACE", "1");
 
     ////////////////////////////// Data set ///////////////////////
-    let inputs: Vec<f32> = vec![0.0, 0.5, 1.0]; // ce qui est donné au réseau
-    let _observed_values: Vec<f32> = vec![0.0, 1.0, 0.0]; // ce qui est attendu qu'il donne
+    
+    let  datas = runst::DataSet {
+        inputs : vec![vec![0.0], vec![0.5], vec![1.0]],
+        observed_values : vec![vec![0.0], vec![1.0], vec![0.0]],
+    };
      
     ///////////// Network settings ///////////////////:
 
     let net = runst::Network {
-        network_struct : vec![1, 2, 4],
+        network_struct : vec![1, 2, 1],
         distrib : String::from("he_uniform_dis"),
     
-        hidden_activ_fun : String::from("relu"),
-        out_activ_fun : String::from("softmax"),
+        hidden_activ_fun : String::from("silu"),
+        out_activ_fun : String::from("sigmoid"),
     };
 
     ///////////////////// Network initialisation //////////////////////////
     // The structure of the network
 
-    let (mut weights_tensor, mut bias_matrix): (Vec<Vec<f32>>, Vec<Vec<f32>>) = runst::net_init(&net);
+    let (mut weights_tensor, mut bias_matrix): (Vec<Vec<f32>>, Vec<Vec<f32>>) = runst::net_init::net_init(&net);
 
     println!("Les poids : {:?}\n\n", weights_tensor);
     println!("Les biais : {:?}\n\n", bias_matrix);
@@ -31,7 +34,7 @@ fn main() {
  
     ////////////////////// PROPAGATION ////////////////////////////////////
 
-    let (network_outputs_sum_bias, network_outputs_neurons): (Vec<Vec<f32>>, Vec<Vec<f32>>) = runst::propagation(&net, &inputs ,&weights_tensor, &bias_matrix);
+    let (network_outputs_sum_bias, network_outputs_neurons): (Vec<Vec<f32>>, Vec<Vec<f32>>) = runst::propagation::propagation(&net, &datas.inputs ,&weights_tensor, &bias_matrix);
     
     
     ///////////////////// MONTRE LES DONNÉES À L'ENVERS ////////////////////
