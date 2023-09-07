@@ -1,10 +1,10 @@
 ////// Struct with the settings of the neural network //////
 pub struct Network {
     pub network_struct: Vec<usize>,
-    pub distrib: String,
+    pub distrib: &'static str,
        
-    pub hidden_activ_fun: String,
-    pub out_activ_fun: String,
+    pub hidden_activ_fun: &'static str,
+    pub out_activ_fun: &'static str,
 }
 
 pub struct DataSet {
@@ -12,13 +12,9 @@ pub struct DataSet {
     pub observed_values: Vec<Vec<f32>>,
 }
 
-/* 
-pub struct PropagOutputs {
-    pub sum:
-    pub sum_bias:
-}
-*/
+pub type FunType = Box<dyn Fn(&Vec<f32>)->Vec<f32>>;
 
 pub mod net_init;
 pub mod propagation;
 pub mod back_prop;
+pub mod calculations;

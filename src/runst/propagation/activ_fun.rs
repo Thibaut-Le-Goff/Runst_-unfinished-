@@ -1,4 +1,4 @@
-// Hidden layer activation functions:
+//Hidden layer activation functions:
 pub fn relu(vector: &Vec<f32>) -> Vec<f32> {
     let mut result: Vec<f32> = vec![0.0; vector.len()];
 
@@ -7,7 +7,7 @@ pub fn relu(vector: &Vec<f32>) -> Vec<f32> {
             result[i] =  vector[i];
         };
     }
-    return result;
+    result
 }
 
 pub fn leaky_relu(vector: &Vec<f32>) -> Vec<f32> {
@@ -20,7 +20,7 @@ pub fn leaky_relu(vector: &Vec<f32>) -> Vec<f32> {
             result[i] = 0.01 * vector[i];
         };
     }
-    return result;
+    result
 }
 
 pub fn silu(vector: &Vec<f32>) -> Vec<f32> {
@@ -29,7 +29,7 @@ pub fn silu(vector: &Vec<f32>) -> Vec<f32> {
     for i in 0..vector.len() {
         result[i] = vector[i] * (1.0 / (1.0 + (-vector[i]).exp()));
     }
-    return result;
+    result
 }
 
 pub fn softplus(vector: &Vec<f32>) -> Vec<f32> {
@@ -38,7 +38,7 @@ pub fn softplus(vector: &Vec<f32>) -> Vec<f32> {
     for i in 0..vector.len() {
         result[i] = (1.0 + (vector[i].exp())).ln();
     }
-    return result;
+    result
 }
 
 // Last layer activation functions:
@@ -49,7 +49,7 @@ pub fn sigmoid(vector: &Vec<f32>) -> Vec<f32> {
     for i in 0..vector.len() {
         result[i] = 1.0 / (1.0 + (-vector[i]).exp());
     }
-    return result;
+    result
 }
 
 pub fn none(vector: &Vec<f32>) -> Vec<f32> {
@@ -84,5 +84,5 @@ pub fn softmax(vector: &Vec<f32>) -> Vec<f32> {
     for i in 0..vector.len() {
         result[i] = vector[i].exp() / sum;
     }
-    return result;
+    result
 }
