@@ -39,7 +39,7 @@ fn main() {
     ///////////// Network settings ///////////////////
 
    let net = runst::Network {
-        network_struct : vec![1, 2, 1, 2],
+        network_struct : vec![1, 1],
         //network_struct : vec![1, 1],
         distrib : "he_normal_dis",
     
@@ -47,7 +47,7 @@ fn main() {
         // useless in a 1-1 neural network because 
         //there is no hidden layers
 
-        out_activ_fun : "softmax",
+        out_activ_fun : "none",
     };
 
     ///////////////////// Network initialisation //////////////////////////
@@ -66,8 +66,12 @@ fn main() {
 
     //let (mut trained_weights, mut trained_bias): (Vec<Vec<f32>>, Vec<Vec<f32>>) = runst::back_prop::back_prop(&net, &observed_values, &network_predictions ,&weights, &bias);
 
-    let mut test: usize = runst::back_prop::back_prop(&net, &observed_values, &network_predictions ,&weights, &bias);
+    println!("Les donnés préditent en brut : \n {:?}", network_predictions);
+
+    //let mut test: usize = runst::back_prop::back_prop(&net, &observed_values, &network_predictions ,&weights, &bias);
     
+    //let mut test1: usize = runst::back_prop::gr
+
     ///////////////////// MONTRE LES DONNÉES À L'ENVERS ////////////////////
     //println!("\nLes données en brut (à l'endroit) :");
     //println!("{:?}", network_predictions);

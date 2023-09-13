@@ -54,16 +54,18 @@ pub fn propagation(net: &Network, inputs: &Vec<Vec<f32>>, weights: &Vec<Vec<f32>
 
             
 
-            let neurons_outputs: Vec<f32> = neuron_out_to_input.clone();
 
             println!("Après le passage dans la function d'activation :");
             println!("{:?}\n", &neuron_out_to_input);
 
-                //network_predictions.push(neurons_outputs);
+            /* 
+            //I don't need the predictions of the hidden layers
+            let neurons_outputs: Vec<f32> = neuron_out_to_input.clone();
                  
             for j in 0..neurons_outputs.len() {
                     network_predictions.push(neurons_outputs[j]);
             }   
+            */
         }
 
         println!("\nDans les neurones de la dernière couche :");

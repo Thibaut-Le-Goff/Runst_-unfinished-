@@ -53,3 +53,15 @@ pub fn mat_vec(matrix: &[f32], vector: &[f32]) -> Vec<f32> {
 
     result
 }
+
+pub fn mat_num(matrix: &[f32], number: &f32) -> Vec<f32> {
+    
+    let mut result: Vec<f32> = vec![0.0; matrix.len()];
+
+    result.par_iter_mut().enumerate().for_each(|(iterator, value)| {
+        *value = matrix[iterator] * number;
+
+    });
+
+    result
+}

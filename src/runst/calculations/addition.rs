@@ -1,10 +1,13 @@
 use rayon::prelude::*;
 
-pub fn vec_vec(vector: &[f32], bias: &[f32]) -> Vec<f32> {
-    let mut result: Vec<f32> = vec![0.0; vector.len()];
+pub fn vec_vec(vector1: &[f32], vector2: &[f32]) -> Vec<f32> {
+    let mut result: Vec<f32> = vec![0.0; vector1.len()];
 
-    for i in 0..vector.len() {
-        result[i] = vector[i] + bias[i];
-    }
+    result.par_iter_mut().enumerate().for_each(|(iterator, value)| {
+        *value = vector1[iterator] + vector2[iterator];
+        //println!("{:?} = {:?} + {:?}", *value, vector1[iterator], vector2[iterator]);
+
+    });
+
     result
 }

@@ -57,4 +57,4 @@ pub fn back_prop(net: &Network, observed_values: &Vec<Vec<f32>>, network_predict
     0
 }
 
-//pub mod grad_descent;
+pub mod grad_des;
