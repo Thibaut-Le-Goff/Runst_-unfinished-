@@ -1,15 +1,14 @@
-pub fn random(layer_n: usize, layer_n1: usize, a: f32, b: f32) -> Vec<f32> {
-    use rand::{thread_rng, Rng};
+use rand::{thread_rng, Rng};
+use rayon::prelude::*;
 
-    let mut rng = thread_rng();
+pub fn random(layer_n: usize, layer_n1: usize, a: f32, b: f32) -> Vec<f32> {
+
     let matrix_length: usize = layer_n * layer_n1;
-    //let matrix_length: usize = columtn * rotw;
     let mut matrix: Vec<f32> = vec![0.0; matrix_length];
 
-    for i in 0..matrix_length {
-        let rand: f32 = rng.gen_range(a..=b);
-        matrix[i] = rand;
-    }
+    matrix.par_iter_mut().for_each(|(weight)| {
+        *weight = thread_rng().gen_range(a..=b);
+    });
     
     matrix
 }
@@ -26,7 +25,6 @@ pub fn normal_dis(layer_n: usize, layer_n1: usize) -> Vec<f32> {
 pub fn uniform_dis(layer_n: usize, layer_n1: usize) -> Vec<f32> {
     let a: f32 = -1.0 / (layer_n as f32).sqrt();
     let b: f32 = 1.0 / (layer_n as f32).sqrt();
-    // .sqrt() only works with float
     let matrix: Vec<f32> = random(layer_n, layer_n1, a, b);
     
     matrix

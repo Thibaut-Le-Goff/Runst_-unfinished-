@@ -8,23 +8,11 @@ pub fn grad_descent(net: &Network, observed_values: &Vec<Vec<f32>>, network_pred
 
     let try_number: usize = 1000;
 
-    /* 
-    let optimal_weights: Vec<Vec<bool>> = weights.par_iter()
-        .map(|&val| vec![false; val])
-        // Here we loop through the weight matrix (par_iter())
-        // as we loop in each vectors of the weight matrix 
-        // we change each vectors by another one with the map method 
-        .collect();
-        // and collect the result into optimal_weights
-    */    
+   
     let optimal_weights: Vec<bool> = vec![false; weights.len()];
     println!("weights : {:?}", optimal_weights);
 
-    /* 
-    let optimal_bias: Vec<Vec<bool>> = bias.par_iter()
-        .map(|&val| vec![false; val])
-        .collect();
-    */
+
     let optimal_bias: Vec<bool> = vec![false; bias.len()];
     println!("bias : {:?}", optimal_bias);
 
@@ -40,7 +28,6 @@ pub fn grad_descent(net: &Network, observed_values: &Vec<Vec<f32>>, network_pred
 
     let power_dif : f32 = 1.0;
 
-    let weight_bias_learning_rate: [f32; 2] = [0.01, 0.1];
     //let mut weight_bias: [f32; 2] = [weight[0][0], bias[0][0]];
 
     let mut derivative_square_residual: Vec<f32>;
@@ -67,94 +54,30 @@ pub fn grad_descent(net: &Network, observed_values: &Vec<Vec<f32>>, network_pred
             // if the weight matrix para is not optimised :
             if optimal_weights[para] == false {
 
-                /* 
-                length_param_matrix = weights[para].len();
-
-                derivative_square_residual = vec![0.0; length_param_matrix];
-                sum_derivative_square_residual = vec![0.0; length_param_matrix];
-                step_size = vec![0.0; length_param_matrix];
-                */
-
-                for j in 0..observed_values.len() {
-                    // for
-
-                    //predicted_value = (weight[z][j] * observed_values[0][j]) + bias[z][j];
-                    // this value is already calculated by the propagation processe
-
-                    derivative_square_residual = (-power_dif * inputs[j]) * (observed_values[0][j] - network_predictions);
-                    sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
-                }
-
-                step_size = sum_derivative_square_residual * weight_bias_learning_rate[para];
-                weight_bias[para] = weight_bias[para] - step_size;
-
-                if sum_derivative_square_residual <= precision_success && sum_derivative_square_residual >= -precision_success {
-                    weight_bias_trouve[para] = true;
-                    true_counter = true_counter + 1;
-
-                    println!("\n\nfini de trouver le bon coéficient directeur de la droite de prediction  ! ");
-                    println!("Le coéficient directeur : {}", weight_bias[para]);
-                }
+                weights_update(weights[para])
 
             }
-
-
 
             // if the bias matrix is not optimised :
             if optimal_bias[para] == false {
 
-                sum_derivative_square_residual = 0.0;
-
-                for j in 0..observed_values[0].len() {
-
-                    //predicted_value = (weight[z][j] * observed_values[0][j]) + bias[z][j];
-                    // this value is already calculated by the propagation processe
-
-                    if y == 0 {
-                        derivative_square_residual = (-power_dif * inputs[j]) * (observed_values[0][j] - predicted_value);
-                        sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
-                    }
-
-                    if y == 1 {
-                        derivative_square_residual = -power_dif * (observed_values[j] - predicted_value);
-                        sum_derivative_square_residual = derivative_square_residual + sum_derivative_square_residual;
-                    }
-                }
-
-                step_size = sum_derivative_square_residual * weight_bias_learning_rate[para];
-                weight_bias[para] = weight_bias[para] - step_size;
-
-                if sum_derivative_square_residual <= precision_success && sum_derivative_square_residual >= -precision_success {
-                    weight_bias_trouve[para] = true;
-                    true_counter = true_counter + 1;
-
-                    if y == 0 {
-                        println!("\n\nfini de trouver le bon coéficient directeur de la droite de prediction  ! ");
-                        println!("Le coéficient directeur : {}", weight_bias[para]);
-                    }
-
-                    if y == 1 {
-                        println!("\n\nfini de trouver le bon intercept de la droite de prediction  ! ");
-                        println!("L'intercept : {}", weight_bias[para]);
-                    }
-                }
+                bias_update(bias[para])
             }
         }
 
-        if true_counter == weight_bias_trouve.len() {
+        if true_counter == (optimal_weights.len() + optimal_bias.len()) {
             number_end = trial;
             break;
         }
     }
     
-    if true_counter == weight_bias_trouve.len() {
-        println!("\nl'équation de la droite de prédiction est : y = a{} + {}", weight_bias[0], weight_bias[1]);
+    if true_counter == (optimal_weights.len() + optimal_bias.len()) {
+        println!("\nl'équation de la droite de prédiction est : y = a{:?} + {:?}", weights, bias);
         println!("L'algorithme a fait {} essaies pour trouver les bonnes données.", number_end + 1);
     }
 
-    //weights
-
-    //return (weight_bias, weight_bias);
     0
 }
+
+pub mod optimisation;
 */

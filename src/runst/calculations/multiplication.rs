@@ -54,7 +54,7 @@ pub fn mat_vec(matrix: &[f32], vector: &[f32]) -> Vec<f32> {
     result
 }
 
-pub fn mat_num(matrix: &[f32], number: &f32) -> Vec<f32> {
+pub fn mat_nunum_matm(number: &f32, matrix: &[f32]) -> Vec<f32> {
     
     let mut result: Vec<f32> = vec![0.0; matrix.len()];
 
