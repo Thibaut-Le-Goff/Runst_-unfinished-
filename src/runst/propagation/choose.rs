@@ -1,8 +1,7 @@
 /////////////// Select the activation functions wanted ///////////
 
-use crate::runst::Network;
+use crate::runst::objects::*;
 use crate::runst::propagation::activ_fun::*;
-use crate::runst::FunType;
 
 pub fn activ_fun(hidden_activ_fun: &'static str, out_activ_fun: &'static str, activ_fun_list: &[(FunType, &'static str); 7]) -> (usize, usize) {
 

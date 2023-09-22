@@ -1,7 +1,7 @@
 // linking the functions(FunType) to their name(&str):
 
 use crate::runst::propagation::activ_fun::*;
-use crate::runst::FunType;
+use crate::runst::objects::FunType;
 
 //pub fn activ_fun() -> Vec<(FunType, &'static str)> {
 pub fn activ_fun() -> [(FunType, &'static str); 7] {

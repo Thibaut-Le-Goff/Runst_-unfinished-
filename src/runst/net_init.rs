@@ -1,5 +1,5 @@
 ///////////////////// Network initialisation //////////////////////////
-use crate::runst::Network;
+use crate::runst::objects::Network;
 use rayon::prelude::*;
 
 pub fn net_init(net: &Network) -> (Vec<Vec<f32>>, Vec<Vec<f32>>) {

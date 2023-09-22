@@ -1,4 +1,5 @@
 mod runst;
+use crate::runst::objects::*;
 
 //#![allow(dead_code)]
 use std::env;
@@ -10,57 +11,38 @@ fn main() {
     ////////////////////////////// Data set ///////////////////////
     
     let inputs: Vec<Vec<f32>> = vec![vec![0.5], vec![2.3], vec![2.9]];
-    //let inputs: Vec<Vec<f32>> = vec![vec![0.5], vec![2.3], vec![2.9], vec![2.3], vec![2.9], vec![2.3], vec![2.9]];
-    //let inputs: Vec<Vec<f32>> = vec![vec![0.5, 0.5], vec![2.3, 0.5], vec![2.9, 0.5], vec![2.3, 0.5], vec![2.9, 0.5], vec![2.3, 0.5], vec![2.9, 0.5]];
 
-
-    //let observed_values: Vec<Vec<f32>> = vec![vec![1.4], vec![1.9], vec![3.2], vec![1.9], vec![3.2], vec![1.9], vec![3.2]];
-    // Since propagation works with matrix multiplication, one per layers, and 
-    // backpropagation by gradient descent, one per neurons, 
-    // I can't process the datas the same way.
-    //
-    // in imputs = Vec<nb_propagations<nb_neurons_at_first_layer>>
-    // and
-    // in observed_values = Vec<nb_neurons_at_last_layer<nb_propagations>>
-    // but the datas will need to be put backward.
-
-    //let observed_values: Vec<Vec<f32>> = vec![vec![1.4, 1.9, 3.2, 1.4, 1.9, 3.2]];
-    //let observed_values: Vec<Vec<f32>> = vec![vec![1.4, 1.9, 3.2]];
-    //backward :
     let observed_values: Vec<Vec<f32>> = vec![vec![3.2, 1.9, 1.4]];
 
-    /* 
-    let  datas = runst::DataSet {
-        inputs : vec![vec![0.5], vec![2.3], vec![2.9]],
-        observed_values : vec![vec![1.4], vec![1.9], vec![3.2]],
-    };
-    */
 
     ///////////// Network settings ///////////////////
 
-   let net = runst::Network {
-        network_struct : vec![1, 1],
-        //network_struct : vec![1, 1],
-        distrib : "he_normal_dis",
-    
-        hidden_activ_fun : "none",
-        // useless in a 1-1 neural network because 
-        //there is no hidden layers
+    let network_struct: Vec<usize> = vec![1, 1];
+    let distrib: &'static str = "he_normal_dis";
+    let hidden_activ_fun: &'static str = "none";
+    // useless in a 1-1 neural network because 
+    //there is no hidden layers
+    let out_activ_fun: &'static str = "none";
 
-        out_activ_fun : "none",
-    };
+
+   let net_test: Network = Network::new( 
+        network_struct,
+        distrib,
+        hidden_activ_fun,
+        out_activ_fun,
+    );
 
     ///////////////////// Network initialisation //////////////////////////
     // The structure of the network
 
-    let (mut weights, mut bias): (Vec<Vec<f32>>, Vec<Vec<f32>>) = runst::net_init::net_init(&net);
+    let mut net_para: NetworkPara = NetworkPara::new(&net_test);
     
-    println!("Les poids sont : \n {:?} \n Les biais sont \n {:?}", weights, bias);
+    println!("Les poids sont : \n {:?} \n Les biais sont \n {:?}", net_para.weights, net_para.bias);
 
     ////////////////////// PROPAGATION ////////////////////////////////////
     
     //let network_predictions: Vec<Vec<f32>> = runst::propagation::propagation(&net, &inputs ,&weights, &bias);
-    let network_predictions: Vec<f32> = runst::propagation::propagation(&net, &inputs ,&weights, &bias);
+    let network_predictions: Vec<f32> = runst::propagation::propagation(&net_test, &inputs ,&net_para.weights, &net_para.bias);
     
     ////////////////////// BACK-PROPAGATION ////////////////////////////////////
 

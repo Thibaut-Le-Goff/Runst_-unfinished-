@@ -1,8 +1,7 @@
 ///////////////// for the propagation ///////////////////////////
 //use crate::runst::propagation::choose;
 use crate::runst::calculations;
-use crate::runst::Network;
-use crate::runst::FunType;
+use crate::runst::objects::*;
 
 pub fn propagation(net: &Network, inputs: &Vec<Vec<f32>>, weights: &Vec<Vec<f32>>, bias: &Vec<Vec<f32>>) -> Vec<f32> {
 //pub fn propagation(net: &Network, inputs: &Vec<Vec<f32>>, weights: &Vec<Vec<f32>>, bias: &Vec<Vec<f32>>) -> Vec<Vec<f32>> {
